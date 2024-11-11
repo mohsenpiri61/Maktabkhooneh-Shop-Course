@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<!-- ========== MAIN CONTENT ========== -->
+  <main id="content" role="main">
+    <!-- Form -->
+    <div class="container content-space-3 content-space-t-lg-4 content-space-b-lg-3">
+      <div class="flex-grow-1 mx-auto" style="max-width: 28rem;">
+        <!-- Heading -->
+        <div class="text-center mb-5 mb-md-7">
+          <h1 class="h2">فرم ثبت نام</h1>
+          <p>برای ثبت نام کافیست فرم زیر را پر نمایید</p>
+        </div>
+        <!-- End Heading -->
+
+        <!-- Form -->
+        <form method="post">
+          {% csrf_token %}
+              <!-- Form -->
+              <div class="mb-3">
+                <label class="form-label">ایمیل شما</label>
+                <input type="email" class="form-control form-control-lg text-center" for="email" name="email" 
+                  placeholder="" aria-label="" required>
+                
+              </div>
+    
+    
+              <!-- End Form -->
+                <!-- Form: Password1 -->
+                <div class="mb-3">
+                    <label class="form-label" for="password1">رمز عبور</label>
+                    <div class="input-group input-group-merge" data-hs-validation-validate-class>
+                        <input type="password" class="js-toggle-password form-control form-control-lg text-center" id="password1" name="password1" placeholder="" required>
+                    </div>
+                </div>
+
+                <!-- Form: Password2 -->
+                <div class="mb-3">
+                    <label class="form-label" for="password2">تأیید رمز عبور</label>
+                    <div class="input-group input-group-merge" data-hs-validation-validate-class>
+                        <input type="password" class="js-toggle-password form-control form-control-lg text-center" id="password2" name="password2" placeholder="" required>
+                    </div>
+                </div>
+
+
+          <!-- Check -->
+          <div class="form-check mb-3">
+            <input type="checkbox" class="form-check-input" 
+              name="signupFormPrivacyCheck" required>
+            <label class="form-check-label small" for="signupHeroFormPrivacyCheck"><a href="#">سیاست حفظ حریم خصوصی</a> با ارسال این فرم من آن را خوانده و
+              تایید کرده ام </label>
+            <span class="invalid-feedback">لطفاً سیاست حفظ حریم خصوصی ما را بپذیرید.</span>
+          </div>
+          <!-- End Check -->
+ 
+          
+          {% if form.errors %}
+          <div class="alert alert-danger alert-dismissible fade show" role="alert" id="form-errors">
+              {{ form.errors }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+         {% endif %}   
+          <div class="d-grid mb-3">
+            <button type="submit" class="btn btn-primary btn-lg">ثبت نام</button>
+          </div>
+
+          <div class="text-center">
+            <p>از قبل حساب کاربری دارید؟<a class="link" href="{% url 'accounts:login' %}">از اینجا وارد شوید</a></p>
+          </div>
+        </form>
+        <!-- End Form -->
+      </div>
+    </div>
+    <!-- End Form -->
+  </main>
+  <!-- ========== END MAIN CONTENT ========== -->
+
+
+
+  <!-- ========== END FOOTER ========== -->
+
+  <!-- ========== SECONDARY CONTENTS ========== -->
+
+
+  <!-- Go To -->
+  <a class="js-go-to go-to position-fixed" href="javascript:;" style="visibility: hidden;" data-hs-go-to-options='{
+       "offsetTop": 700,
+       "position": {
+         "init": {
+           "right": "2rem"
+         },
+         "show": {
+           "bottom": "2rem"
+         },
+         "hide": {
+           "bottom": "-2rem"
+         }
+       }
+     }'>
+    <i class="bi-chevron-up"></i>
+  </a>
+  <!-- ========== END SECONDARY CONTENTS ========== -->
+
+  <!-- JS Implementing Plugins -->
+  <script src="{% static 'js/vendor.min.js' %}"></script>
+
+  <!-- JS Front -->
+  <script src="{% static 'js/theme.min.js' %}"></script>
+
+
+
+      {% endblock content %}
+
+     
+
+      {% block extra_js %}
+ 
+  {% endblock extra_js %}
+
+</html>

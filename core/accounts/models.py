@@ -83,7 +83,18 @@ class Profile(models.Model):
         return "کاربر جدید"
 
 
+
+from django.core.mail import send_mail
+
 @receiver(post_save, sender=User)
 def create_profile(sender, instance, created, **kwargs):
     if created:
-        Profile.objects.create(user=instance, pk=instance.pk)
+        Profile.objects.create(user=instance, pk=instance.pk) # pk=instance.pk lead to user's id be equal to profile's id
+        send_mail(
+            'خوش آمدید!',
+            'خوش آمدید به سایت ما!',
+            'admin@mysite.com',
+            [instance.email],
+            fail_silently=False,
+        )
+        

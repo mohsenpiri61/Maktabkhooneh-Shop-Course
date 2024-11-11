@@ -7,10 +7,10 @@ User = get_user_model()
 
 # defining the status of items to be saved or released
 class ContactModel(models.Model):
-    full_name = models.CharField(max_length=200)
-    email = models.EmailField(default=None, null=True)
-    phone_number = models.CharField(max_length=200, blank=True, null=True)
-    subject = models.CharField(max_length=200, blank=True, null=True)
+    full_name = models.CharField(max_length=200, null=True)
+    email = models.EmailField(default=None)
+    phone_number = models.CharField(max_length=200, default=None)
+    subject = models.CharField(max_length=200, default=None)
     content = models.TextField(max_length=700)
     is_seen = models.BooleanField(default=False)
     created_date = models.DateTimeField(auto_now_add=True)

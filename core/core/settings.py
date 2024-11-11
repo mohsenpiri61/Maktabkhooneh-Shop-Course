@@ -92,7 +92,7 @@ DATABASES = {
         'NAME': config("PGDB_NAME",default='postgres'),                      
         'USER': config("PGDB_USER",default='postgres'),
         'PASSWORD': config("PGDB_PASSWORD",default='postgres'),
-        'HOST': config("PGDB_HOST",default='db'),
+        'HOST': config("PGDB_HOST",default='db'),  # db is the service's name that we have defined in docker-compose.yml
         'PORT': config("PGDB_PORT", cast=int,default=5432),
     }
 }
@@ -150,12 +150,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = config("EMAIL_HOST",default="smtp4dev")
-EMAIL_USE_TLS = config("EMAIL_USE_TLS", cast=bool ,default=False)
-EMAIL_USE_SSL = config("EMAIL_USE_SSL", cast=bool ,default=False)
-EMAIL_PORT = config("EMAIL_PORT", cast=int,default=25)
-EMAIL_HOST_USER = config("EMAIL_HOST_USER",default="")
-EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD",default="")
+EMAIL_HOST = config("EMAIL_HOST", default="smtp4dev")
+EMAIL_USE_TLS = config("EMAIL_USE_TLS", cast=bool, default=False)
+EMAIL_USE_SSL = config("EMAIL_USE_SSL", cast=bool, default=False)
+EMAIL_PORT = config("EMAIL_PORT", cast=int, default=25)
+EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
 
 # django debug toolbar for docker usage
 SHOW_DEBUGGER_TOOLBAR = config("SHOW_DEBUGGER_TOOLBAR", cast=bool, default=True)
@@ -174,6 +174,15 @@ if SHOW_DEBUGGER_TOOLBAR:
 AUTH_USER_MODEL = 'accounts.User'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL= '/'
+
+# token timeout
+PASSWORD_RESET_TIMEOUT = 172800  # 40 hours in seconds
+
+# DEFAULT_FROM_EMAIL = 'mopiry@gmail.com'
+
+# celery configs
+CELERY_BROKER_URL = "redis://redis_shop:6379/1"
+# CELERY_RESULT_BACKEND = 'redis://redis_shop:6379/1'
 
 # payment gateway settings
 MERCHANT_ID = config("MERCHANT_ID",default="4ced0a1e-4ad8-4309-9668-3ea3ae8e8897")

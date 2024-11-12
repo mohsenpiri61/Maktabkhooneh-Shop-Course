@@ -29,9 +29,9 @@ class LoginView(auth_views.LoginView):
         messages.success(self.request, success_message)
         return response
 
-    def form_invalid(self, form):
-        form.add_error(None, "ایمیل یا رمز عبور شما نادرست است.")
-        return super().form_invalid(form)
+    # def form_invalid(self, form):
+    #     form.add_error(None, "ایمیل یا رمز عبور شما نادرست است.")
+    #     return super().form_invalid(form)
     
     
     

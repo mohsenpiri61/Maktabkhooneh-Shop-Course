@@ -55,7 +55,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_verified = models.BooleanField(default=False)
     type = models.IntegerField(
         choices=UserType.choices, default=UserType.customer.value)
-
+    failed_login_attempts = models.PositiveIntegerField(default=0)
+    last_failed_login = models.DateTimeField(null=True, blank=True)
+    
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
 
@@ -99,8 +101,3 @@ def create_profile(sender, instance, created, **kwargs):
         )
         
 
-
-class FailedLoginAttempt(models.Model):
-    email = models.EmailField(default="admin@mysite.com") 
-    ip_address = models.GenericIPAddressField()
-    timestamp = models.DateTimeField(auto_now_add=True)

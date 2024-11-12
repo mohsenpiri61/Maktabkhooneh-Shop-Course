@@ -21,11 +21,9 @@ class LoginView(auth_views.LoginView):
         user = self.request.user
         if user.is_superuser:
             success_message = "شما با دسترسی ادمین وارد شده‌اید."
-        elif user.is_staff:
-            success_message = "شما با موفقیت وارد شده‌اید."
         else:
             success_message = "شما با موفقیت وارد شده‌اید."
-
+ 
         messages.success(self.request, success_message)
         return response
 

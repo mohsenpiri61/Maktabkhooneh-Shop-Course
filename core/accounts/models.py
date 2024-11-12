@@ -98,3 +98,9 @@ def create_profile(sender, instance, created, **kwargs):
             fail_silently=False,
         )
         
+
+
+class FailedLoginAttempt(models.Model):
+    email = models.EmailField(default="admin@mysite.com") 
+    ip_address = models.GenericIPAddressField()
+    timestamp = models.DateTimeField(auto_now_add=True)

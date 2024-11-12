@@ -13,3 +13,6 @@ def post_login(sender, user, request, **kwargs):
 def pre_logout(sender, user, request, **kwargs):
     cart = CartSession(request.session)
     cart.merge_session_cart_in_db(user)
+
+
+

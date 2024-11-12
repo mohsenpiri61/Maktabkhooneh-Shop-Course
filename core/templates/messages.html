@@ -1,13 +1,16 @@
 {% if messages %}
     {% for message in messages %}
       <script>
-        Toastify({
-            text:`{{ message|safe }}`,
-            className: `{{ message.tags }}`,
-            style: {
-              background: "blue",
-            }
-          }).showToast();
+           setTimeout(function() {
+            Toastify({
+                text: `{{ message|safe }}`,
+                className: `{{ message.tags }}`,
+                style: {
+                    background: "blue",
+                },
+                duration: 6000  // مدت زمان ۵ ثانیه
+            }).showToast();
+        }, 100);  // شروع با تاخیر 100 میلی‌ثانیه
       </script>
     {% endfor %}
   {% endif %}

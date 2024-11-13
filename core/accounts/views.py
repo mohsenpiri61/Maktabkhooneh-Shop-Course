@@ -23,11 +23,13 @@ class LoginView(auth_views.LoginView):
     def form_valid(self, form):
         response = super().form_valid(form)
         user = self.request.user
-        if user.is_superuser:
-            success_message = "شما با دسترسی ادمین وارد شده‌اید."
+        if user.is_active:
+            if user.is_superuser:
+                success_message = "شما با دسترسی ادمین وارد شده‌اید."
+            else:
+                success_message = "شما با موفقیت وارد شده‌اید."
         else:
-            success_message = "شما با موفقیت وارد شده‌اید."
-
+            print('ddd')
         messages.success(self.request, success_message)
         return response
 
@@ -96,7 +98,7 @@ class SignUpView(CreateView):
     def form_valid(self, form):
         response = super().form_valid(form)
         email_address = self.object.email
-        messages.success(self.request, f"کاربری شما با کاربری  {email_address} . با موفقیت ثبت شد")
+        messages.success(self.request, f"حساب شما با نام کاربری {email_address}  ثبت شد. \n لطفاً برای فعالسازی حساب ، به ایمیل خود مراجعه و لینک مربوطه را در مرورگر وارد نمایید. ")
         # messages.success(self.request, "کاربری شما با موفقیت ایجاد شد")
         return response
 

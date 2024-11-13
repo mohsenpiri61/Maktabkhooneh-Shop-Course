@@ -23,13 +23,10 @@ class LoginView(auth_views.LoginView):
     def form_valid(self, form):
         response = super().form_valid(form)
         user = self.request.user
-        if user.is_active:
-            if user.is_superuser:
-                success_message = "شما با دسترسی ادمین وارد شده‌اید."
-            else:
-                success_message = "شما با موفقیت وارد شده‌اید."
+        if user.is_superuser:
+            success_message = "شما با دسترسی ادمین وارد شده‌اید."
         else:
-            print('ddd')
+            success_message = "شما با موفقیت وارد شده‌اید."
         messages.success(self.request, success_message)
         return response
 

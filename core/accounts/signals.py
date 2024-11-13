@@ -23,6 +23,10 @@ def login_failed_handler(sender, credentials, request, **kwargs):
         print(user)
     except User.DoesNotExist:
         return messages.warning(request, "کاربری با ایمیل وارد شده وجود ندارد.")
+   
+   
+    if not user.is_active:
+        return messages.warning(request, "حساب شما فعال نیست. لطفاً حساب خود را فعال کنید.")
     # محاسبه بازه زمانی
     time_threshold = timezone.now() - timezone.timedelta(seconds=20)
     if user.last_failed_login and user.last_failed_login < time_threshold:

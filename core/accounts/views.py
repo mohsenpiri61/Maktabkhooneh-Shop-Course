@@ -96,7 +96,7 @@ class SignUpView(CreateView):
     def form_valid(self, form):
         response = super().form_valid(form)
         email_address = self.object.email
-        messages.success(self.request, f"کاربری شما با کاربری  {email_address} با موفقیت ثبت شد")
+        messages.success(self.request, f"کاربری شما با کاربری  {email_address} . با موفقیت ثبت شد")
         # messages.success(self.request, "کاربری شما با موفقیت ایجاد شد")
         return response
 

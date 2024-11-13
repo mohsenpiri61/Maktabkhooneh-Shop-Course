@@ -24,7 +24,7 @@ def login_failed_handler(sender, credentials, request, **kwargs):
     except User.DoesNotExist:
         return messages.warning(request, "کاربری با ایمیل وارد شده وجود ندارد.")
    
-   
+    # سیگنال برای شمارش تعداد ورودهای ناموفق تنها پس از فعال‌سازی حساب کاربر عمل خواهد کرد.
     if not user.is_active:
         return messages.warning(request, "حساب شما فعال نیست. لطفاً حساب خود را فعال کنید.")
     # محاسبه بازه زمانی

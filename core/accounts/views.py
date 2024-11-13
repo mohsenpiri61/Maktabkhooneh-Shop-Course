@@ -113,7 +113,6 @@ class ActivateAccountView(View):
             # دریافت شناسه کاربر از URL
             uid = urlsafe_base64_decode(uidb64).decode('utf-8')
             user = User.objects.get(pk=uid)
-            print(uid, user, 555)
             
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
             user = None
@@ -122,7 +121,6 @@ class ActivateAccountView(View):
         if user and account_activation_token.check_token(user, token):
             user.is_active = True
             user.save()
-            print(user, 666)
             messages.success(request, "حساب شما با موفقیت فعال شد.")
             return redirect('accounts:login')
         else:

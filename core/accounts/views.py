@@ -91,5 +91,8 @@ class SignUpView(CreateView):
     success_url = reverse_lazy('accounts:login')
 
     def form_valid(self, form):
-        messages.success(self.request, "The new user was created successfully")
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        email_address = self.object.email
+        messages.success(self.request, f"کاربری شما با کاربری  {email_address} با موفقیت ثبت شد")
+        # messages.success(self.request, "کاربری شما با موفقیت ایجاد شد")
+        return response

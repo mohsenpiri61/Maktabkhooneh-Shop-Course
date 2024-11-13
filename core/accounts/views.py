@@ -1,14 +1,18 @@
 from django.contrib.auth import views as auth_views
 from accounts.forms import AuthenticationForm, SignUpForm
 from django.urls import reverse_lazy
-from .models import User
-from django.contrib import messages
 from django.shortcuts import render
 from django.views.generic import CreateView
 from .tasks import send_reset_password_email
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
+from django.views import View
+from django.shortcuts import redirect
+from .models import User
+from django.contrib import messages
+from django.utils.http import urlsafe_base64_decode
+from .tokens import account_activation_token
 
 
 class LoginView(auth_views.LoginView):
@@ -23,16 +27,15 @@ class LoginView(auth_views.LoginView):
             success_message = "شما با دسترسی ادمین وارد شده‌اید."
         else:
             success_message = "شما با موفقیت وارد شده‌اید."
- 
+
         messages.success(self.request, success_message)
         return response
 
     # def form_invalid(self, form):
     #     form.add_error(None, "ایمیل یا رمز عبور شما نادرست است.")
     #     return super().form_invalid(form)
-    
-    
-    
+
+
 class LogoutView(auth_views.LogoutView):
     pass
 
@@ -98,22 +101,13 @@ class SignUpView(CreateView):
         return response
 
 
-from django.views import View
-from django.shortcuts import redirect
-from .models import User
-from django.contrib import messages
-from django.utils.http import urlsafe_base64_decode
-from .tokens import account_activation_token
-
-
-
 class ActivateAccountView(View):
     def get(self, request, uidb64, token):
         try:
             # دریافت شناسه کاربر از URL
             uid = urlsafe_base64_decode(uidb64).decode('utf-8')
             user = User.objects.get(pk=uid)
-            
+
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
             user = None
 

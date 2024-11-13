@@ -6,8 +6,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
 from accounts.validators import validate_iranian_cellphone_number
 import uuid
-
-
+from django.core.mail import send_mail
 
 class UserType(models.IntegerChoices):
     customer = 1, _("customer")
@@ -59,7 +58,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         choices=UserType.choices, default=UserType.customer.value)
     failed_login_attempts = models.PositiveIntegerField(default=0)
     last_failed_login = models.DateTimeField(null=True, blank=True)
-    
+
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
 
@@ -87,14 +86,11 @@ class Profile(models.Model):
         return "کاربر ناشناس"
 
 
-
-from django.core.mail import send_mail
-
 @receiver(post_save, sender=User)
 def create_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance, pk=instance.pk, first_name="کاربر جدید",
-            last_name="کاربر جدید") # pk=instance.pk lead to user's id be equal to profile's id
+                               last_name="کاربر جدید")  # pk=instance.pk lead to user's id be equal to profile's id
         send_mail(
             'خوش آمدید!',
             'خوش آمدید به سایت ما!',
@@ -102,11 +98,4 @@ def create_profile(sender, instance, created, **kwargs):
             [instance.email],
             fail_silently=False,
         )
-        
 
-class ActivationToken(models.Model):
-    user = models.OneToOneField('User', on_delete=models.CASCADE)
-    token = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    
-    

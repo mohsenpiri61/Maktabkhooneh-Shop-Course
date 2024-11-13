@@ -20,7 +20,6 @@ def login_failed_handler(sender, credentials, request, **kwargs):
 
     try:
         user = User.objects.get(email=email)
-        print(user)
     except User.DoesNotExist:
         return messages.warning(request, "کاربری با ایمیل وارد شده وجود ندارد.")
    
@@ -29,9 +28,11 @@ def login_failed_handler(sender, credentials, request, **kwargs):
         return messages.warning(request, "حساب شما فعال نیست. لطفاً حساب خود را فعال کنید.")
     # محاسبه بازه زمانی
     time_threshold = timezone.now() - timezone.timedelta(seconds=20)
-    if user.last_failed_login and user.last_failed_login < time_threshold:
-        user.failed_login_attempts = 0  # ریست تلاش‌ها پس از بازه زمانی
-
+    
+    if user.last_failed_login:  #  to ensure that the last_failed_login field be initialized and not be None.
+        if user.last_failed_login < time_threshold: # Executed when the last_failed_login field has a value And Last unsuccessful attempt time less than time_threshold value
+            user.failed_login_attempts = 0  # ریست تلاش‌ها پس از گذشت بازه زمانی
+            
     # افزایش تعداد تلاش‌ها و تنظیم زمان آخرین تلاش ناموفق
     user.failed_login_attempts += 1
     user.last_failed_login = timezone.now()

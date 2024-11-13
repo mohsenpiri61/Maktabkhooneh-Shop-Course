@@ -30,3 +30,7 @@ def login_failed_handler(sender, credentials, request, **kwargs):
     if user.failed_login_attempts >= 3:
         # هشدار دادن به کاربر (مثلاً با نمایش پیام یا ایمیل هشدار)
         messages.warning(request, f"هشدار: تلاش‌های ورود ناموفق برای {email} از حد مجاز عبور کرده است \n {user.failed_login_attempts}تلاش ناموفق \n لطفا بعد از 20 ثانیه دیگر اقدام کنید")
+        
+        
+        
+        

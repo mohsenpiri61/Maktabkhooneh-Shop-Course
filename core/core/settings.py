@@ -148,7 +148,7 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
+#smrtp4dev settings
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = config("EMAIL_HOST", default="smtp4dev")
 EMAIL_USE_TLS = config("EMAIL_USE_TLS", cast=bool, default=False)
@@ -188,4 +188,6 @@ CELERY_BROKER_URL = "redis://redis_shop:6379/1"
 MERCHANT_ID = config("MERCHANT_ID",default="4ced0a1e-4ad8-4309-9668-3ea3ae8e8897")
 SANDBOX_MODE = config("SANDBOX_MODE", cast=bool, default=True)
 
-
+#Activation of new user account
+SITE_DOMAIN = "127.0.0.1:8000"  # دامنه و پورت مورد نظر
+SITE_PROTOCOL = "http"  # در صورت استفاده از HTTPS، آن را به "https" تغییر دهید

@@ -96,3 +96,35 @@ class SignUpView(CreateView):
         messages.success(self.request, f"کاربری شما با کاربری  {email_address} با موفقیت ثبت شد")
         # messages.success(self.request, "کاربری شما با موفقیت ایجاد شد")
         return response
+
+
+from django.views import View
+from django.shortcuts import redirect
+from .models import User
+from django.contrib import messages
+from django.utils.http import urlsafe_base64_decode
+from .tokens import account_activation_token
+
+
+
+class ActivateAccountView(View):
+    def get(self, request, uidb64, token):
+        try:
+            # دریافت شناسه کاربر از URL
+            uid = urlsafe_base64_decode(uidb64).decode('utf-8')
+            user = User.objects.get(pk=uid)
+            print(uid, user, 555)
+            
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            user = None
+
+        # بررسی توکن و فعال‌سازی کاربر
+        if user and account_activation_token.check_token(user, token):
+            user.is_active = True
+            user.save()
+            print(user, 666)
+            messages.success(request, "حساب شما با موفقیت فعال شد.")
+            return redirect('accounts:login')
+        else:
+            messages.error(request, "لینک فعال‌سازی منقضی شده یا نامعتبر است.")
+            return redirect('accounts:login')

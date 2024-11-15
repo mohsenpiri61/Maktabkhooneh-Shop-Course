@@ -18,7 +18,7 @@ class CheckOutForm(forms.Form):
         try:
             address = UserAddressModel.objects.get(id=address_id, user=user)
         except UserAddressModel.DoesNotExist:
-            raise forms.ValidationError("Invalid address for the requested user.")
+            raise forms.ValidationError("این آدرس به شما تعلق ندارد.")
 
         return address
     

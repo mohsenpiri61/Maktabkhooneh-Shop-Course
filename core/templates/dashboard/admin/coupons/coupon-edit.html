@@ -41,7 +41,7 @@
                             <label>درصد تخفیف</label>
                             {{form.discount_percent}}
                         </div>
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-6 mb-3" >
                             <label>محدودیت نفرات استفاده</label>
                             {{form.max_limit_usage}}
                         </div>
@@ -77,9 +77,9 @@
                 <table class="table">
                     <thead class="thead-light">
                         <tr>
-                            <th scope="col">#</th>
+                            <th scope="col">ردیف</th>
                             <th scope="col">کاربر</th>
-
+                            <th scope="col">درصد تخفیف</th>    
                         </tr>
                     </thead>
                     <tbody>
@@ -87,7 +87,7 @@
                         <tr>
                             <th scope="row">{{forloop.counter}}</th>
                             <td>{{user.email}}</td>
-
+                            <td>{{object.discount_percent}}</td>
                         </tr>
                         {% endfor %}
 

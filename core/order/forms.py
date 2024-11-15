@@ -14,7 +14,7 @@ class CheckOutForm(forms.Form):
         address_id = self.cleaned_data.get('address_id')
 
         # Check if the address_id belongs to the requested user
-        user = self.request.user  # Assuming the user is available in the request object
+        user = self.request.user  
         try:
             address = UserAddressModel.objects.get(id=address_id, user=user)
         except UserAddressModel.DoesNotExist:

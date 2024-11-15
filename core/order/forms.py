@@ -26,8 +26,8 @@ class CheckOutForm(forms.Form):
         code = self.cleaned_data.get('coupon')
         if code == "":
             return None
-        # Check if the address_id belongs to the requested user
-        user = self.request.user  # Assuming the user is available in the request object
+        
+        user = self.request.user  
         coupon = None
         try:
             coupon = CouponModel.objects.get(code=code)
@@ -38,10 +38,8 @@ class CheckOutForm(forms.Form):
             if coupon.used_by.count() >= coupon.max_limit_usage:
                 raise forms.ValidationError("محدودیت در تعداد استفاده")
 
-
             if coupon.expiration_date and coupon.expiration_date < timezone.now():
                 raise forms.ValidationError("کد تخفیف منقضی شده است")
-
 
             if user in coupon.used_by.all():
                 raise forms.ValidationError("این کد تخفیف قبلا توسط شما استفاده شده است")

@@ -28,7 +28,7 @@ class CheckOutForm(forms.Form):
             return None
         
         user = self.request.user  
-        coupon = None
+
         try:
             coupon = CouponModel.objects.get(code=code)
         except CouponModel.DoesNotExist:

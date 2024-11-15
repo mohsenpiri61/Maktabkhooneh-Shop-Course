@@ -17,7 +17,6 @@ from order.models import CouponModel
 from django.http import JsonResponse
 from django.utils import timezone
 from django.shortcuts import redirect
-# Create your views here.
 from payment.zarinpal_client import ZarinPalSandbox
 from payment.models import PaymentModel
 

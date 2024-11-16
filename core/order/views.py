@@ -118,32 +118,55 @@ class ValidateCouponView(LoginRequiredMixin, HasCustomerAccessPermission, View):
 
     def post(self, request, *args, **kwargs):
         code = request.POST.get("code")
-        user = self.request.user
-
-        status_code = 200
-        message = "کد تخفیف با موفقیت ثبت شد"
-        total_price = 0
-        total_tax = 0
+        user = request.user
 
         try:
+            cart = CartModel.objects.get(user=user)
             coupon = CouponModel.objects.get(code=code)
-        except CouponModel.DoesNotExist:
-            return JsonResponse({"message": "کد تخفیف یافت نشد"}, status=404)
-        else:
+
+            # بررسی اعتبار کد تخفیف
+            if coupon.expiration_date and coupon.expiration_date < timezone.now():
+                return JsonResponse({"message": "کد تخفیف منقضی شده است"}, status=400)
+
             if coupon.used_by.count() >= coupon.max_limit_usage:
-                status_code, message = 403, "محدودیت در تعداد استفاده"
+                return JsonResponse({"message": "محدودیت استفاده از کد تخفیف به پایان رسیده است"}, status=400)
 
-            elif coupon.expiration_date and coupon.expiration_date < timezone.now():
-                status_code, message = 403, "کد تخفیف منقضی شده است"
+            if user in coupon.used_by.all():
+                return JsonResponse({"message": "شما قبلاً از این کد تخفیف استفاده کرده‌اید"}, status=400)
 
-            elif user in coupon.used_by.all():
-                status_code, message = 403, "این کد تخفیف قبلا توسط شما استفاده شده است"
+            # اعمال کد تخفیف
+            cart.coupon = coupon
+            cart.save()
 
-            else:
-                cart = CartModel.objects.get(user=self.request.user)
+            # محاسبه قیمت جدید
+            total_price = cart.calculate_total_price()
+            discount_price = total_price * (coupon.discount_percent / 100)
+            final_price = total_price - discount_price
 
-                total_price = cart.calculate_total_price()
-                total_price = round(
-                    total_price - (total_price * (coupon.discount_percent/100)))
-                total_tax = round((total_price * 9)/100)
-        return JsonResponse({"message": message, "total_tax": total_tax, "total_price": total_price}, status=status_code)
+            return JsonResponse({
+                "message": "کد تخفیف اعمال شد",
+                "total_price": round(final_price),
+                "discount": round(discount_price)
+            }, status=200)
+
+        except CouponModel.DoesNotExist:
+            return JsonResponse({"message": "کد تخفیف معتبر نیست"}, status=400)
+        except CartModel.DoesNotExist:
+            return JsonResponse({"message": "سبد خرید شما خالی است"}, status=400)
+
+class CancelCouponView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        try:
+            cart = CartModel.objects.get(user=request.user)
+            cart.coupon = None
+            cart.save()
+
+            total_price = cart.calculate_total_price()
+
+            return JsonResponse({
+                "message": "کد تخفیف لغو شد",
+                "total_price": round(total_price)
+            }, status=200)
+
+        except CartModel.DoesNotExist:
+            return JsonResponse({"message": "سبد خرید شما خالی است"}, status=400)

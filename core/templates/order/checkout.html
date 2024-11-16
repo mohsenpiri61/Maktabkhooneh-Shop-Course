@@ -63,8 +63,10 @@
 
                         <div class="input-group border-bottom pb-4 mb-3 ">
                             <input type="text" class="form-control text-center" name="coupon" placeholder="کد تخفیف"
-                                aria-label="کد تخفیف" form="checkout-form" id="coupon-input">
-                            <button class="btn btn-primary" type="button" onclick="validateCoupon()"> بررسی</button>
+                                aria-label="کد تخفیف" id="coupon-code" form="checkout-form" >
+                                
+                            <button class="btn btn-primary" type="button" id="apply-coupon" > اعمال کد</button>
+                            <button class="btn btn-danger" type="button" id="cancel-coupon"  > لغو کد</button>
                         </div>
 
                         <div class="border-bottom pb-4 mb-4">
@@ -138,52 +140,75 @@
 <!-- End Content -->
 {% endblock content %}
 
-{% block extra_js %}
+{% block extra_js %}  
+
 <script>
-    function applyDiscount(total_price,total_tax){
-        $("#total-price").html(total_price)
-        $("#total-tax").html(total_tax)
-
-        formatPriceInToman(document.getElementById("total-price"))
-        formatPriceInToman(document.getElementById("total-tax"))
-    }
-
-    function validateCoupon(){
-        $.ajax({
-            url: "{%  url 'order:validate-coupon' %}",
-            method: 'POST',
-            data: {
-                code: $('#coupon-input').val(),
-                csrfmiddlewaretoken: '{{ csrf_token }}'
+    $(document).ready(function () {
+        function showToast(message, color = "#28a745") {
+            Toastify({
+                text: message,
+                duration: 3000,
+                gravity: "top", // نمایش در بالا
+                position: "center", // موقعیت در وسط
+                backgroundColor: color, // رنگ پس‌زمینه
+                close: true, // نمایش دکمه بستن
+            }).showToast();
+        }
     
-            },
-            success: function (response) {
-                console.log("success",response);
-                Toastify({
-                    text:response.message,
-                    className: `info`,
-                    style: {
-                      background: "blue",
-                    }
-                  }).showToast();
-                  applyDiscount(response.total_price,response.total_tax)
-                // do something with the response data
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                console.log(errorThrown);
-                Toastify({
-                    text:jqXHR.responseJSON.message,
-                    className: `error`,
-                    style: {
-                      background: "red",
-                    }
-                  }).showToast();
-                
-                // handle the error case
+        $("#apply-coupon").click(function () {
+            const code = $("#coupon-code").val();
+            if (!code) {
+                showToast("لطفاً کد تخفیف را وارد کنید.", "#dc3545"); // پیام خطا
+                return;
             }
+    
+            $.ajax({
+                url: "{% url 'order:apply-coupon' %}",
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                },
+                data: { code: code },
+                success: function (data) {
+                    showToast(data.message, "#28a745"); // پیام موفقیت
+                    if (data.total_price) {
+                        $("#total-price").text(data.total_price);
+                    }
+    
+                    if (data.message === "کد تخفیف با موفقیت ثبت شد") {
+                        $("#cancel-coupon").prop("disabled", true); // فعال کردن دکمه لغو
+                    }
+                },
+                error: function (xhr) {
+                    const errorMessage = xhr.responseJSON ? xhr.responseJSON.message : "خطایی رخ داده است.";
+                    showToast(errorMessage, "#dc3545"); // پیام خطا
+                },
+            });
         });
-    }
-
-</script>
+    
+        $("#cancel-coupon").click(function () {
+            $.ajax({
+                url: "{% url 'order:cancel-coupon' %}",
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                },
+                success: function (data) {
+                    showToast(data.message, "#28a745"); // پیام موفقیت
+                    if (data.total_price) {
+                        $("#total-price").text(data.total_price);
+                    }
+                     
+                    $("#coupon-code").val("");  // پاک کردن فیلد کد تخفیف
+                    $("#cancel-coupon").prop("disabled", false); // غیرفعال کردن دکمه لغو
+                },
+                error: function (xhr) {
+                    const errorMessage = xhr.responseJSON ? xhr.responseJSON.message : "خطایی رخ داده است.";
+                    showToast(errorMessage, "#dc3545"); // پیام خطا
+                },
+            });
+        });
+    });
+    </script>
 
 {% endblock %}

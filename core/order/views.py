@@ -19,7 +19,7 @@ from django.utils import timezone
 from django.shortcuts import redirect
 from payment.zarinpal_client import ZarinPalSandbox
 from payment.models import PaymentModel
-
+from decimal import Decimal
 
 class OrderCheckOutView(LoginRequiredMixin, HasCustomerAccessPermission, FormView):
     template_name = "order/checkout.html"
@@ -58,7 +58,7 @@ class OrderCheckOutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
         CartSession(self.request.session).clear()
         total_price = order.calculate_total_price()
         if coupon:
-            total_price = total_price - round((total_price * (coupon.discount_percent/100)))
+            total_price = total_price - round((total_price * Decimal(coupon.discount_percent/100)))
         order.total_price = order.calculate_total_price()
         order.save()
          

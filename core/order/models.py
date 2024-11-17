@@ -11,7 +11,6 @@ class OrderStatusType(models.IntegerChoices):
 
 class UserAddressModel(models.Model):
     user = models.ForeignKey('accounts.User', on_delete=models.CASCADE)
-
     address = models.CharField(max_length=250)
     state = models.CharField(max_length=50)
     city = models.CharField(max_length=50)

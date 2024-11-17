@@ -6,14 +6,12 @@ from django.views.generic import (
 )
 from django.contrib.auth.mixins import LoginRequiredMixin
 from order.permissions import HasCustomerAccessPermission
-from order.models import UserAddressModel
 from order.forms import CheckOutForm
 from cart.models import CartModel, CartItemModel
-from order.models import OrderModel, OrderItemModel
+from order.models import OrderModel, OrderItemModel, CouponModel, UserAddressModel
 from django.urls import reverse_lazy
 from cart.cart import CartSession
 from decimal import Decimal
-from order.models import CouponModel
 from django.http import JsonResponse
 from django.utils import timezone
 from django.shortcuts import redirect
@@ -35,8 +33,8 @@ class OrderCheckOutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
         user = self.request.user
         cleaned_data = form.cleaned_data
         address = cleaned_data['address_id']
-        coupon = cleaned_data['coupon']
-
+        # coupon = cleaned_data['coupon']
+        print(address)
         cart = CartModel.objects.get(user=user)
         order = self.create_order(address)
 
@@ -119,8 +117,8 @@ class ValidateCouponView(LoginRequiredMixin, HasCustomerAccessPermission, View):
         user = request.user
 
         try:
-            cart = CartModel.objects.get(user=user)
-            coupon = CouponModel.objects.get(code=code)
+            
+            coupon = OrderModel.objects.get(code=code)
 
             # بررسی اعتبار کد تخفیف
             if coupon.expiration_date and coupon.expiration_date < timezone.now():
@@ -133,8 +131,7 @@ class ValidateCouponView(LoginRequiredMixin, HasCustomerAccessPermission, View):
                 return JsonResponse({"message": "شما قبلاً از این کد تخفیف استفاده کرده‌اید"}, status=400)
 
             # اعمال کد تخفیف
-            cart.coupon = coupon
-            cart.save()
+            cart = CartModel.objects.get(user=self.request.user)
 
             # محاسبه قیمت جدید
             total_price = cart.calculate_total_price()
@@ -149,14 +146,14 @@ class ValidateCouponView(LoginRequiredMixin, HasCustomerAccessPermission, View):
 
         except CouponModel.DoesNotExist:
             return JsonResponse({"message": "کد تخفیف معتبر نیست"}, status=400)
-        except CartModel.DoesNotExist:
-            return JsonResponse({"message": "سبد خرید شما خالی است"}, status=400)
+
+
 
 class CancelCouponView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         try:
             cart = CartModel.objects.get(user=request.user)
-            cart.coupon = None
+            #cart.coupon = None
             cart.save()
 
             total_price = cart.calculate_total_price()

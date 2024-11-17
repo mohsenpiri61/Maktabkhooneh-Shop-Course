@@ -4,19 +4,22 @@ from order.models import CouponModel
 # Create your models here.
 class CartModel(models.Model):
     user = models.ForeignKey("accounts.User", on_delete=models.CASCADE)
-    coupon = models.ForeignKey(CouponModel, null=True, blank=True, on_delete=models.SET_NULL)
+    # coupon = models.ForeignKey(CouponModel, null=True, blank=True, on_delete=models.SET_NULL)
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.user.email
 
+    # def calculate_total_price(self):
+    #     total_price = sum(item.product.get_price() * item.quantity for item in self.cart_items.all())
+    #     if self.coupon:
+    #         discount = total_price * (self.coupon.discount_percent / 100)
+    #         total_price -= discount
+    #     return total_price
+
     def calculate_total_price(self):
-        total_price = sum(item.product.get_price() * item.quantity for item in self.cart_items.all())
-        if self.coupon:
-            discount = total_price * (self.coupon.discount_percent / 100)
-            total_price -= discount
-        return total_price
+        return sum(item.product.get_price() * item.quantity for item in self.cart_items.all())
 
 
 class CartItemModel(models.Model):

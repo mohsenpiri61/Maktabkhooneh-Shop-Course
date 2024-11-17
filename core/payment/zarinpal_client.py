@@ -6,6 +6,7 @@ from django.contrib.sites.models import Site
 def get_domain():
     from django.contrib.sites.models import Site
     return Site.objects.get_current().domain
+
 def get_protocol():
     # Determine the protocol based on the SECURE_SSL_REDIRECT setting
     return'https' if getattr(settings, 'SECURE_SSL_REDIRECT', False) else 'http'

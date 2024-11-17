@@ -44,24 +44,25 @@ class OrderModel(models.Model):
     state = models.CharField(max_length=50)
     city = models.CharField(max_length=50)
     zip_code = models.CharField(max_length=50)
-
     payment = models.ForeignKey('payment.PaymentModel', on_delete=models.SET_NULL, null=True, blank=True)
-
     total_price = models.DecimalField(default=0, max_digits=10, decimal_places=0)
-
     coupon = models.ForeignKey(CouponModel, on_delete=models.PROTECT, null=True, blank=True)
     status = models.IntegerField(choices=OrderStatusType.choices, default=OrderStatusType.pending.value)
+
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ["-created_date"]
 
+
     def calculate_total_price(self):
         return sum(item.price * item.quantity for item in self.order_items.all())
-
+    
+    
     def __str__(self):
         return f"{self.user.email} - {self.id}"
+
 
     def get_status(self):
         return {

@@ -44,7 +44,7 @@ class OrderCheckOutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
         self.clear_cart(cart)
 
         total_price = order.calculate_total_price()
-        self.apply_coupon(coupon, order, user, total_price)
+        #self.apply_coupon(coupon, order, user, total_price)
         order.save()
         return redirect(self.create_payment_url(order))
 
@@ -81,16 +81,18 @@ class OrderCheckOutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
         cart.cart_items.all().delete()
         CartSession(self.request.session).clear()
 
-    def apply_coupon(self, coupon, order, user, total_price):
-        if coupon:
-            order.coupon = coupon
-            coupon.used_by.add(user)
-            coupon.save()
+    
+    # def apply_coupon(self, coupon, order, user, total_price):
+    #     if coupon:
+    #         order.coupon = coupon
+    #         coupon.used_by.add(user)
+    #         coupon.save()
+    #     order.total_price = total_price
 
-        order.total_price = total_price
 
     def form_invalid(self, form):
         return super().form_invalid(form)
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -138,7 +140,7 @@ class ValidateCouponView(LoginRequiredMixin, HasCustomerAccessPermission, View):
             total_price = cart.calculate_total_price()
             discount_price = total_price * (coupon.discount_percent / 100)
             final_price = total_price - discount_price
-
+            print('fdfdff', total_price, discount_price, final_price)
             return JsonResponse({
                 "message": "کد تخفیف اعمال شد",
                 "total_price": round(final_price),

@@ -60,9 +60,9 @@ class CartSession:
 
     def sync_cart_items_from_db(self, user):
         cart, created = CartModel.objects.get_or_create(user=user)
-        cart_items = CartItemModel.objects.filter(cart=cart)
+        cart_items_on_db = CartItemModel.objects.filter(cart=cart)
                 
-        for cart_item in cart_items:
+        for cart_item in cart_items_on_db:
             for item in self._cart["items"]:
                 if str(cart_item.product.id) == item["product_id"]:
                     cart_item.quantity = item["quantity"]
@@ -79,9 +79,9 @@ class CartSession:
 
         for item in self._cart["items"]:
             product_obj = ProductModel.objects.get(id=item["product_id"], status=ProductStatusType.publish.value)
-
             cart_item, created = CartItemModel.objects.get_or_create(cart=cart, product=product_obj)
             cart_item.quantity = item["quantity"]
             cart_item.save()
+            
         session_product_ids = [item["product_id"] for item in self._cart["items"]]
         CartItemModel.objects.filter(cart=cart).exclude(product__id__in=session_product_ids).delete()

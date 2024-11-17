@@ -74,7 +74,7 @@ class OrderModel(models.Model):
 
     @property
     def is_successful(self):
-        return self.status == OrderStatusType.success.value
+        return self.status == OrderStatusType.PAID.value
 
     def get_price(self):
 

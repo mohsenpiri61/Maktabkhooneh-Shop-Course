@@ -4,9 +4,9 @@ from decimal import Decimal
 
 
 class OrderStatusType(models.IntegerChoices):
-    pending = 1, "در انتظار پرداخت"
-    success = 2, "موفقیت آمیز"
-    failed = 3, "لغو شده"
+    PENDING = 1, "در انتظار پرداخت"
+    PAID = 2, "پرداخت شده"
+    CANCELED = 3, "لغو شده"
 
 
 class UserAddressModel(models.Model):
@@ -19,7 +19,11 @@ class UserAddressModel(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
 
-
+    def get_full_address(self):
+        return f"{self.state},{self.city},{self.address}"
+    
+    
+    
 class CouponModel(models.Model):
     code = models.CharField(max_length=100)
     discount_percent = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(100)])
@@ -34,19 +38,15 @@ class CouponModel(models.Model):
         return self.code
 
 
+    
 # Create your models here.
 class OrderModel(models.Model):
     user = models.ForeignKey('accounts.User', on_delete=models.PROTECT)
-
-    # order address information
-    address = models.CharField(max_length=250)
-    state = models.CharField(max_length=50)
-    city = models.CharField(max_length=50)
-    zip_code = models.CharField(max_length=50)
+    address = models.ForeignKey(UserAddressModel, on_delete=models.PROTECT)
     payment = models.ForeignKey('payment.PaymentModel', on_delete=models.SET_NULL, null=True, blank=True)
     total_price = models.DecimalField(default=0, max_digits=10, decimal_places=0)
     coupon = models.ForeignKey(CouponModel, on_delete=models.PROTECT, null=True, blank=True)
-    status = models.IntegerField(choices=OrderStatusType.choices, default=OrderStatusType.pending.value)
+    status = models.IntegerField(choices=OrderStatusType.choices, default=OrderStatusType.PENDING.value)
 
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
@@ -70,8 +70,7 @@ class OrderModel(models.Model):
             "label": OrderStatusType(self.status).label,
         }
 
-    def get_full_address(self):
-        return f"{self.state},{self.city},{self.address}"
+
 
     @property
     def is_successful(self):

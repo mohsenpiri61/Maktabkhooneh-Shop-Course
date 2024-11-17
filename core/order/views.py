@@ -60,10 +60,7 @@ class OrderCheckOutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
     def create_order(self, address):
         return OrderModel.objects.create(
             user=self.request.user,
-            address=address.address,
-            state=address.state,
-            city=address.city,
-            zip_code=address.zip_code,
+            address=address
         )
 
     def create_order_items(self, order, cart):

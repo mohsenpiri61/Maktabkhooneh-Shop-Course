@@ -114,8 +114,8 @@ class ValidateCouponView(LoginRequiredMixin, HasCustomerAccessPermission, View):
         user = request.user
 
         try:
-            
-            coupon = OrderModel.objects.get(code=code)
+            # استفاده از CouponModel برای دریافت کد تخفیف
+            coupon = CouponModel.objects.get(code=code)
 
             # بررسی اعتبار کد تخفیف
             if coupon.expiration_date and coupon.expiration_date < timezone.now():
@@ -134,7 +134,7 @@ class ValidateCouponView(LoginRequiredMixin, HasCustomerAccessPermission, View):
             total_price = cart.calculate_total_price()
             discount_price = total_price * (coupon.discount_percent / 100)
             final_price = total_price - discount_price
-            print('fdfdff', total_price, discount_price, final_price)
+
             return JsonResponse({
                 "message": "کد تخفیف اعمال شد",
                 "total_price": round(final_price),
@@ -143,7 +143,6 @@ class ValidateCouponView(LoginRequiredMixin, HasCustomerAccessPermission, View):
 
         except CouponModel.DoesNotExist:
             return JsonResponse({"message": "کد تخفیف معتبر نیست"}, status=400)
-
 
 
 class CancelCouponView(LoginRequiredMixin, View):

@@ -175,10 +175,6 @@
                     if (data.total_price) {
                         $("#total-price").text(data.total_price);
                     }
-    
-                    if (data.message === "کد تخفیف با موفقیت ثبت شد") {
-                        $("#cancel-coupon").prop("disabled", true); // فعال کردن دکمه لغو
-                    }
                 },
                 error: function (xhr) {
                     const errorMessage = xhr.responseJSON ? xhr.responseJSON.message : "خطایی رخ داده است.";
@@ -188,6 +184,11 @@
         });
     
         $("#cancel-coupon").click(function () {
+            const code = $("#coupon-code").val();
+            if (!code) {
+                showToast("لطفاً کد تخفیف را وارد کنید.", "#dc3545"); // پیام خطا
+                return;
+            }
             $.ajax({
                 url: "{% url 'order:cancel-coupon' %}",
                 method: "POST",
@@ -195,13 +196,18 @@
                     "X-CSRFToken": "{{ csrf_token }}",
                 },
                 success: function (data) {
-                    showToast(data.message, "#28a745"); // پیام موفقیت
-                    if (data.total_price) {
-                        $("#total-price").text(data.total_price);
+                    if (data.success) {
+                        showToast(data.message, "#28a745"); // نمایش پیام موفقیت
+                        if (data.total_price) {
+                            $("#total-price").text(data.total_price); // به‌روزرسانی قیمت کل
+                        }
+                        $("#coupon-code").val(""); // پاک کردن فیلد کد تخفیف
+                        
+                    } else {
+                        showToast(data.message, "#dc3545"); // نمایش پیام خطا
+                        $("#coupon-code").val(""); // پاک کردن فیلد کد تخفیف در صورت کد نامعتبر
+                        
                     }
-                     
-                    $("#coupon-code").val("");  // پاک کردن فیلد کد تخفیف
-                    $("#cancel-coupon").prop("disabled", false); // غیرفعال کردن دکمه لغو
                 },
                 error: function (xhr) {
                     const errorMessage = xhr.responseJSON ? xhr.responseJSON.message : "خطایی رخ داده است.";

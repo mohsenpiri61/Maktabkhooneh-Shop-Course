@@ -149,7 +149,6 @@ class CancelCouponView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         try:
             cart = CartModel.objects.get(user=request.user)
-            #cart.coupon = None
             cart.save()
 
             total_price = cart.calculate_total_price()

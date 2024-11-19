@@ -178,7 +178,8 @@
                 },
                 error: function (xhr) {
                     const errorMessage = xhr.responseJSON ? xhr.responseJSON.message : "خطایی رخ داده است.";
-                    showToast(errorMessage, "#dc3545"); // پیام خطا
+                    showToast(errorMessage, "#dc3545");  //پیام خطا
+                    $("#coupon-code").val("");  // پاک کردن فیلد کد تخفیف 
                 },
             });
         });
@@ -196,18 +197,12 @@
                     "X-CSRFToken": "{{ csrf_token }}",
                 },
                 success: function (data) {
-                    if (data.success) {
-                        showToast(data.message, "#28a745"); // نمایش پیام موفقیت
-                        if (data.total_price) {
-                            $("#total-price").text(data.total_price); // به‌روزرسانی قیمت کل
-                        }
-                        $("#coupon-code").val(""); // پاک کردن فیلد کد تخفیف
-                        
-                    } else {
-                        showToast(data.message, "#dc3545"); // نمایش پیام خطا
-                        $("#coupon-code").val(""); // پاک کردن فیلد کد تخفیف در صورت کد نامعتبر
-                        
+                    showToast(data.message, "#28a745"); // پیام موفقیت
+                    if (data.total_price) {
+                        $("#total-price").text(data.total_price);
                     }
+                     
+                    $("#coupon-code").val("");  // پاک کردن فیلد کد تخفیف
                 },
                 error: function (xhr) {
                     const errorMessage = xhr.responseJSON ? xhr.responseJSON.message : "خطایی رخ داده است.";

@@ -25,28 +25,33 @@ class OrderCheckOutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
     success_url = reverse_lazy('order:completed')
 
     def get_form_kwargs(self):
+        """اضافه کردن درخواست کاربر به آرگومان‌های فرم."""
         kwargs = super(OrderCheckOutView, self).get_form_kwargs()
         kwargs['request'] = self.request
         return kwargs
 
     def form_valid(self, form):
+        """عملیات مورد نیاز در صورت معتبر بودن فرم"""
         user = self.request.user
         cleaned_data = form.cleaned_data
         address = cleaned_data['address_id']
-        # coupon = cleaned_data['coupon']
-        print(address)
+        coupon = cleaned_data['coupon']
+        print(address, coupon)
+        
+        # ایجاد سفارش
         cart = CartModel.objects.get(user=user)
-        order = self.create_order(address)
+        order = self.create_order(user, address, coupon)
 
+        # اضافه کردن آیتم‌های سفارش و پاک کردن سبد خرید
         self.create_order_items(order, cart)
         self.clear_cart(cart)
 
-        total_price = order.calculate_total_price()
-        #self.apply_coupon(coupon, order, user, total_price)
-        order.save()
+        # هدایت به درگاه پرداخت
         return redirect(self.create_payment_url(order))
-
+    
+    
     def create_payment_url(self, order):
+        """ایجاد لینک پرداخت با استفاده از درگاه زرین‌پال"""
         zarinpal = ZarinPalSandbox()
         response = zarinpal.payment_request(order.get_price())
         payment_obj = PaymentModel.objects.create(
@@ -56,13 +61,20 @@ class OrderCheckOutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
         order.payment = payment_obj
         order.save()
         return zarinpal.generate_payment_url(response.get("Authority"))
+    
 
-    def create_order(self, address):
+    def create_order(self, user, address, coupon):
+        """ایجاد سفارش جدید"""
         return OrderModel.objects.create(
-            user=self.request.user,
-            address=address
+            user=user,
+            address=address,
+            coupon=coupon
         )
-
+        order.total_price = order.calculate_total_price()
+        order.save()
+        return order
+    
+    
     def create_order_items(self, order, cart):
         for item in cart.cart_items.all():
             OrderItemModel.objects.create(
@@ -73,16 +85,9 @@ class OrderCheckOutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
             )
 
     def clear_cart(self, cart):
+        """پاک کردن آیتم‌های سبد خرید"""
         cart.cart_items.all().delete()
         CartSession(self.request.session).clear()
-
-    
-    # def apply_coupon(self, coupon, order, user, total_price):
-    #     if coupon:
-    #         order.coupon = coupon
-    #         coupon.used_by.add(user)
-    #         coupon.save()
-    #     order.total_price = total_price
 
 
     def form_invalid(self, form):
@@ -92,11 +97,13 @@ class OrderCheckOutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         cart = CartModel.objects.get(user=self.request.user)
-        context["addresses"] = UserAddressModel.objects.filter(
-            user=self.request.user)
         total_price = cart.calculate_total_price()
-        context["total_price"] = total_price
-        context["total_tax"] = round((total_price * 9)/100)
+        
+        context.update({
+            "addresses": UserAddressModel.objects.filter(user=self.request.user),
+            "total_price": total_price,
+            "total_tax": round((total_price * 9) / 100),
+        })
         return context
 
 

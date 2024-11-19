@@ -24,7 +24,7 @@ class CheckOutForm(forms.Form):
     
     def clean_coupon(self):
         code = self.cleaned_data.get('coupon')
-        if code == "":
+        if code == "":   # or if not code :
             return None
         
         user = self.request.user  

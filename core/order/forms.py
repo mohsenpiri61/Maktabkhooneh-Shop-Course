@@ -14,7 +14,6 @@ class CheckOutForm(forms.Form):
         """ تضمین می کند که  آدرس به همان کاربری تعلق دارد که درخواست را ارسال کرده است (بررسی مالکیت)"""
         address_id = self.cleaned_data.get('address_id')
 
-        # Check if the address_id belongs to the requested user
         user = self.request.user  
         try:
             address = UserAddressModel.objects.get(id=address_id, user=user)
@@ -30,7 +29,6 @@ class CheckOutForm(forms.Form):
             return None
         
         user = self.request.user  
-
         try:
             coupon = CouponModel.objects.get(code=code)
         except CouponModel.DoesNotExist:

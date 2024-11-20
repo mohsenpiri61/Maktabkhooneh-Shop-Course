@@ -11,6 +11,7 @@ class CheckOutForm(forms.Form):
         super(CheckOutForm, self).__init__(*args, **kwargs)
         
     def clean_address_id(self):
+        """ تضمین می کند که  آدرس به همان کاربری تعلق دارد که درخواست را ارسال کرده است (بررسی مالکیت)"""
         address_id = self.cleaned_data.get('address_id')
 
         # Check if the address_id belongs to the requested user
@@ -23,6 +24,7 @@ class CheckOutForm(forms.Form):
         return address
     
     def clean_coupon(self):
+        """ تضمین می‌کند که در لحظه پردازش نهایی داده‌ها، کد تخفیف هنوز معتبر است"""
         code = self.cleaned_data.get('coupon')
         if code == "":   # or if not code :
             return None

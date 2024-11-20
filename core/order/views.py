@@ -36,8 +36,7 @@ class OrderCheckOutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
         cleaned_data = form.cleaned_data
         address = cleaned_data['address_id']
         coupon = cleaned_data['coupon']
-        print(address, coupon)
-        
+                
         # ایجاد سفارش
         cart = CartModel.objects.get(user=user)
         order = self.create_order(user, address, coupon)

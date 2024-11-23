@@ -52,11 +52,11 @@ class ZarinPalSandbox:
 if __name__ == "__main__":
     zarinpal = ZarinPalSandbox(merchant_id="4ced0a1e-4ad8-2311-9668-3ea3ae8e8897")
     response =zarinpal.payment_request(15000)
-
-    
     response_dict = json.loads(response.text)
     print(response_dict)
+    
     input("proceed to generating payment url?")
+    
     print(zarinpal.generate_payment_url(response_dict["data"]["authority"]))
     
     input("check the payment?")

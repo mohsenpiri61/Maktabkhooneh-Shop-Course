@@ -12,8 +12,8 @@ def get_protocol():
     return'https' if getattr(settings, 'SECURE_SSL_REDIRECT', False) else 'http'
 
 class ZarinPalSandbox:
-    _payment_request_url = "https://sandbox.zarinpal.com/pg/rest/WebGate/PaymentRequest.json"
-    _payment_verify_url = "https://sandbox.zarinpal.com/pg/rest/WebGate/PaymentVerification.json"
+    _payment_request_url = "https://sandbox.zarinpal.com/pg/v4/payment/request.json"
+    _payment_verify_url = "https://sandbox.zarinpal.com/pg/v4/payment/verify.json"
     _payment_page_url = "https://sandbox.zarinpal.com/pg/StartPay/"
     _callback_url = f"{get_protocol()}://{get_domain()}/payment/verify"
 
@@ -22,10 +22,10 @@ class ZarinPalSandbox:
 
     def payment_request(self, amount, description="پرداختی کاربر"):
         payload = {
-            "MerchantID": self.merchant_id,
-            "Amount": str(amount),
-            "CallbackURL": self._callback_url,
-            "Description": description,
+            "merchantID": self.merchant_id,
+            "amount": str(amount),
+            "callbackURL": self._callback_url,
+            "description": description,
         }
         headers = {
             'Content-Type': 'application/json'
@@ -50,4 +50,4 @@ class ZarinPalSandbox:
         return response.json()
 
     def generate_payment_url(self,authority):
-        return f"{self._payment_page_url}{authority}"
+        return f"{self._payment_page_url}/{authority}"

@@ -6,7 +6,6 @@ from django.shortcuts import redirect, get_object_or_404
 from .zarinpal_client import ZarinPalSandbox
 from order.models import OrderModel, OrderStatusType
 
-# Create your views here.
 
 
 class PaymentVerifyView(View):

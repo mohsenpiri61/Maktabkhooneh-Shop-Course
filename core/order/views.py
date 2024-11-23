@@ -14,9 +14,11 @@ from cart.cart import CartSession
 from decimal import Decimal
 from django.http import JsonResponse
 from django.utils import timezone
-from django.shortcuts import redirect
-from payment.zarinpal_client import ZarinPalSandbox
+from django.shortcuts import redirect, reverse
+from payment.sepal import SepalPaymentGateway
 from payment.models import PaymentModel
+from django.contrib import messages
+
 
 
 class OrderCheckOutView(LoginRequiredMixin, HasCustomerAccessPermission, FormView):
@@ -50,16 +52,16 @@ class OrderCheckOutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
     
     
     def create_payment_url(self, order):
-        """ایجاد لینک پرداخت با استفاده از درگاه زرین‌پال"""
-        zarinpal = ZarinPalSandbox()
-        response = zarinpal.payment_request(order.get_price())
-        payment_obj = PaymentModel.objects.create(
-            authority_id=response.get("Authority"),
-            amount=order.get_price(),
-        )
-        order.payment = payment_obj
-        order.save()
-        return zarinpal.generate_payment_url(response.get("Authority"))
+        """ایجاد لینک پرداخت سپال"""
+        try:
+            payment_url = SepalPaymentGateway.create_payment(order)
+            return payment_url  # هدایت کاربر به درگاه پرداخت
+        except ValueError as e:
+            # مدیریت خطا در صورت مشکل در ارتباط با درگاه
+            messages.error(self.request, str(e))
+            return reverse("order:checkout")
+
+
     
 
     def create_order(self, user, address, coupon):

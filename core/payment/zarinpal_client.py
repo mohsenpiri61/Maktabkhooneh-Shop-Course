@@ -22,7 +22,7 @@ class ZarinPalSandbox:
 
     def payment_request(self, amount, description="پرداختی کاربر"):
         payload = {
-            "merchantID": self.merchant_id,
+            "merchant_id": self.merchant_id,
             "amount": str(amount),
             "callbackURL": self._callback_url,
             "description": description,
@@ -38,9 +38,9 @@ class ZarinPalSandbox:
 
     def payment_verify(self,amount,authority):
         payload = {
-            "MerchantID": self.merchant_id,
-            "Amount": amount,
-            "Authority": authority
+            "merchant_id": self.merchant_id,
+            "amount": amount,
+            "authority": authority
         }
         headers = {
             'Content-Type': 'application/json'
@@ -50,4 +50,4 @@ class ZarinPalSandbox:
         return response.json()
 
     def generate_payment_url(self,authority):
-        return f"{self._payment_page_url}/{authority}"
+        return f"{self._payment_page_url}{authority}"

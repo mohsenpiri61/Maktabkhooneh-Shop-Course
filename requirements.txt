@@ -7,4 +7,3 @@ redis
 faker==30.3.0
 django-debug-toolbar==4.2.0
 requests
-certifi

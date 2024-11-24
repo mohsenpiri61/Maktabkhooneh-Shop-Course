@@ -40,7 +40,7 @@ class OrderCheckOutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
         # ایجاد سفارش
         cart = CartModel.objects.get(user=user)
         order = self.create_order(user, address, coupon)
-
+        print(order.get_price())
         # اضافه کردن آیتم‌های سفارش و پاک کردن سبد خرید
         self.create_order_items(order, cart)
         self.clear_cart(cart)
@@ -53,13 +53,14 @@ class OrderCheckOutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
         """ایجاد لینک پرداخت با استفاده از درگاه زرین‌پال"""
         zarinpal = ZarinPalSandbox()
         response = zarinpal.payment_request(order.get_price())
+        
         payment_obj = PaymentModel.objects.create(
-            authority_id=response.get("Authority"),
+            authority_id=response.get("authority"),
             amount=order.get_price(),
         )
         order.payment = payment_obj
         order.save()
-        return zarinpal.generate_payment_url(response.get("Authority"))
+        return zarinpal.generate_payment_url(response.get("authority"))
     
 
     def create_order(self, user, address, coupon):

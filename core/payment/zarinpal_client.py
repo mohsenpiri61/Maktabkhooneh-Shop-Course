@@ -26,6 +26,10 @@ class ZarinPalSandbox:
             "amount": str(amount),
             "callbackURL": self._callback_url,
             "description": description,
+            "metadata": {
+                "mobile": "09195523234",
+                "email": "info.davari@gmail.com"
+            }
         }
         headers = {
             'Content-Type': 'application/json'
@@ -33,8 +37,9 @@ class ZarinPalSandbox:
 
         response = requests.post(
             self._payment_request_url, headers=headers, data=json.dumps(payload))
-
-        return response.json()
+        response_dict = json.loads(response.text)
+        print(response_dict)
+        return response_dict["data"]["authority"]
 
     def payment_verify(self,amount,authority):
         payload = {

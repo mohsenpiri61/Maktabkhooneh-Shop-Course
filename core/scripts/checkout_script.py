@@ -55,8 +55,8 @@ def create_order_and_payment(user_email, address_id, coupon_code=None):
         order.save()
 
         # ایجاد لینک پرداخت از طریق زرین‌پال
-        zarinpal = ZarinPalSandbox(merchant_id="4ced0a1e-4ad8-2311-9668-3ea3ae8e8897")
-        response = zarinpal.payment_request(12500)
+        zarinpal = ZarinPalSandbox()
+        response = zarinpal.payment_request(order.get_price())
 
         # ثبت پرداخت در مدل Payment
         payment_obj = PaymentModel.objects.create(

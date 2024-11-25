@@ -36,7 +36,7 @@ class ZarinPalSandbox:
         }
 
         response = requests.post(self._payment_request_url, headers=headers, data=json.dumps(payload))
-        print(response.status_code)
+        # print(response.status_code)
         response_dict = json.loads(response.text)
         # print(response_dict)
         return response_dict["data"]["authority"]

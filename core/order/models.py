@@ -56,8 +56,9 @@ class OrderModel(models.Model):
 
 
     def calculate_total_price(self):
-        print(f"Calculated Total: {total}")
         return sum(item.price * item.quantity for item in self.order_items.all())
+
+
     
     
     def __str__(self):

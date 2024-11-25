@@ -57,7 +57,6 @@ def create_order_and_payment(user_email, address_id, coupon_code=None):
         
         # ایجاد لینک پرداخت از طریق زرین‌پال
         zarinpal = ZarinPalSandbox()
-        print("Creating payment request...")
         authority = zarinpal.payment_request(order.get_price(), description=f"پرداخت سفارش {order.id} توسط {user.email}")
       
 

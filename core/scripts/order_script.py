@@ -1,5 +1,3 @@
-
-
 from decimal import Decimal
 import sys
 sys.path.append('/app')

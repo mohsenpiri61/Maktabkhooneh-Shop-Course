@@ -44,46 +44,53 @@ class OrderCheckOutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
         # اضافه کردن آیتم‌های سفارش و پاک کردن سبد خرید
         self.create_order_items(order, cart)
         self.clear_cart(cart)
-
+        order.total_price = order.calculate_total_price()
+        print(f"Order Total Price after adding items Without consideration coupon: {order.total_price}")
+        order.save()
+    
         # هدایت به درگاه پرداخت
         return redirect(self.create_payment_url(order))
     
     
     def create_payment_url(self, order):
         """ایجاد لینک پرداخت با استفاده از درگاه زرین‌پال"""
-        print(f"Order Total Price: {order.total_price}")
+        print(f"Order Total Price Without consideration coupon: {order.total_price}")
         zarinpal = ZarinPalSandbox()
-        response = zarinpal.payment_request(order.get_price())
-        print(f"Final Payable Price: {order.get_price()}")
+        authority = zarinpal.payment_request(order.get_price())
+        print(f"Final Payable Price applying coupon: {order.get_price()}")
         payment_obj = PaymentModel.objects.create(
-            authority_id=response.get("authority"),
+            authority_id=authority,
             amount=order.get_price(),
         )
         order.payment = payment_obj
         order.save()
-        return zarinpal.generate_payment_url(response.get("authority"))
+        return zarinpal.generate_payment_url(authority)
     
 
     def create_order(self, user, address, coupon):
         """ایجاد سفارش جدید"""
-        return OrderModel.objects.create(
+        order =  OrderModel.objects.create(
             user=user,
             address=address,
             coupon=coupon
-        )
-        order.total_price = order.calculate_total_price()
+        )   
         order.save()
         return order
     
     
     def create_order_items(self, order, cart):
         for item in cart.cart_items.all():
+            print(f"Cart Item: {item.product.title}, Price: {item.product.get_price()}, Quantity: {item.quantity}")
             OrderItemModel.objects.create(
                 order=order,
                 product=item.product,
                 quantity=item.quantity,
                 price=item.product.get_price(),
             )
+            order.total_price = order.calculate_total_price() 
+            order.save()
+
+    
 
     def clear_cart(self, cart):
         """پاک کردن آیتم‌های سبد خرید"""

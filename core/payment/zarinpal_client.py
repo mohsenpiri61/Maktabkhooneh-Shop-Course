@@ -21,7 +21,7 @@ class ZarinPalSandbox:
         self.merchant_id = merchant_id
 
     def payment_request(self, amount, description="پرداختی کاربر"):
-        print(f"Requesting payment for amount: {amount}")
+        print(f"Requesting payment for amount with coupon: {amount}")
         payload = {
             "merchant_id": self.merchant_id,
             "amount": str(amount),

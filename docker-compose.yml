@@ -32,7 +32,7 @@ services:
       dockerfile: ./dockerfiles/dev/django/Dockerfile
     volumes: 
       - ./core:/app
-      - ./core/scripts:/app/core/scripts
+      - ./core/scripts:/app/core/scripts  # for executing our scripts
     working_dir: /app
     command: python manage.py runserver 0.0.0.0:8000
     ports:

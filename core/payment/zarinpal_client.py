@@ -35,10 +35,10 @@ class ZarinPalSandbox:
             'Content-Type': 'application/json'
         }
 
-        response = requests.post(
-            self._payment_request_url, headers=headers, data=json.dumps(payload))
+        response = requests.post(self._payment_request_url, headers=headers, data=json.dumps(payload))
+        print(response.status_code)
         response_dict = json.loads(response.text)
-        print(response_dict)
+        # print(response_dict)
         return response_dict["data"]["authority"]
 
     def payment_verify(self,amount,authority):

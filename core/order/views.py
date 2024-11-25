@@ -40,7 +40,7 @@ class OrderCheckOutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
         # ایجاد سفارش
         cart = CartModel.objects.get(user=user)
         order = self.create_order(user, address, coupon)
-        print(order.get_price())
+        
         # اضافه کردن آیتم‌های سفارش و پاک کردن سبد خرید
         self.create_order_items(order, cart)
         self.clear_cart(cart)

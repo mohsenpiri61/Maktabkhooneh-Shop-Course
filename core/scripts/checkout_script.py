@@ -53,21 +53,24 @@ def create_order_and_payment(user_email, address_id, coupon_code=None):
         # محاسبه قیمت کل سفارش
         order.total_price = order.calculate_total_price()
         order.save()
-
+        print(f"Order Total Price: {order.total_price}")
+        
         # ایجاد لینک پرداخت از طریق زرین‌پال
         zarinpal = ZarinPalSandbox()
-        response = zarinpal.payment_request(order.get_price())
+        print("Creating payment request...")
+        authority = zarinpal.payment_request(order.get_price(), description=f"پرداخت سفارش {order.id} توسط {user.email}")
+      
 
         # ثبت پرداخت در مدل Payment
         payment_obj = PaymentModel.objects.create(
-            authority_id=response.get("authority"),
+            authority_id=authority,
             amount=order.get_price(),
         )
         order.payment = payment_obj
         order.save()
 
-        # برگشت لینک پرداخت
-        payment_url = zarinpal.generate_payment_url(response.get("authority"))
+        # ایجاد لینک پرداخت
+        payment_url = zarinpal.generate_payment_url(authority)
         print(f"Payment URL: {payment_url}")
 
         return order, payment_url

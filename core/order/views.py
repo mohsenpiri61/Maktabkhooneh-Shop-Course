@@ -51,9 +51,10 @@ class OrderCheckOutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
     
     def create_payment_url(self, order):
         """ایجاد لینک پرداخت با استفاده از درگاه زرین‌پال"""
+        print(f"Order Total Price: {order.total_price}")
         zarinpal = ZarinPalSandbox()
         response = zarinpal.payment_request(order.get_price())
-        
+        print(f"Final Payable Price: {order.get_price()}")
         payment_obj = PaymentModel.objects.create(
             authority_id=response.get("authority"),
             amount=order.get_price(),

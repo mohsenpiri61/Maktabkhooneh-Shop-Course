@@ -15,16 +15,17 @@ class ZarinPalSandbox:
     _payment_request_url = "https://sandbox.zarinpal.com/pg/v4/payment/request.json"
     _payment_verify_url = "https://sandbox.zarinpal.com/pg/v4/payment/verify.json"
     _payment_page_url = "https://sandbox.zarinpal.com/pg/StartPay/"
-    _callback_url = f"{get_protocol()}://{get_domain()}/payment/verify"
+    _callback_url = "http://redreseller.com/verify"
 
     def __init__(self, merchant_id=settings.MERCHANT_ID):
         self.merchant_id = merchant_id
 
     def payment_request(self, amount, description="پرداختی کاربر"):
+        print(f"Requesting payment for amount: {amount}")
         payload = {
             "merchant_id": self.merchant_id,
             "amount": str(amount),
-            "callbackURL": self._callback_url,
+            "callback_url": self._callback_url,
             "description": description,
             "metadata": {
                 "mobile": "09195523234",
@@ -35,11 +36,13 @@ class ZarinPalSandbox:
             'Content-Type': 'application/json'
         }
 
-        response = requests.post(self._payment_request_url, headers=headers, data=json.dumps(payload))
-        # print(response.status_code)
+        response = requests.request("POST", self._payment_request_url, headers=headers, data=json.dumps(payload))       
+
         response_dict = json.loads(response.text)
-        # print(response_dict)
-        return response_dict["data"]["authority"]
+        if "data" in response_dict and response_dict["data"]:
+            return response_dict["data"]["authority"]
+        else:
+            raise ValueError(f"Payment request failed: {response_dict['errors']}")
 
     def payment_verify(self,amount,authority):
         payload = {

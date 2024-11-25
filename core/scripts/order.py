@@ -5,7 +5,7 @@ import sys
 sys.path.append('/app')
 
 import os
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")  # نام پروژه خود را جایگزین کنید
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")  
 
 import django
 django.setup()

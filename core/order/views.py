@@ -46,6 +46,11 @@ class OrderCheckOutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
         self.clear_cart(cart)
         order.total_price = order.calculate_total_price()
         print(f"Order Total Price after adding items Without consideration coupon: {order.total_price}")
+
+        # اضافه کردن کاربر به لیست استفاده‌کنندگان از کد تخفیف
+        coupon.used_by.add(user)
+        coupon.save()
+
         order.save()
     
         # هدایت به درگاه پرداخت
@@ -149,7 +154,7 @@ class ValidateCouponView(LoginRequiredMixin, HasCustomerAccessPermission, View):
             total_price = cart.calculate_total_price()
             discount_price = total_price * (coupon.discount_percent / 100)
             final_price = total_price - discount_price
-
+                           
             return JsonResponse({
                 "message": "کد تخفیف اعمال شد",
                 "total_price": round(final_price),

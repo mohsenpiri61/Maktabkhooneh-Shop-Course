@@ -45,3 +45,5 @@ class CheckOutForm(forms.Form):
                 raise forms.ValidationError("این کد تخفیف قبلا توسط شما استفاده شده است")
 
         return coupon
+    
+    

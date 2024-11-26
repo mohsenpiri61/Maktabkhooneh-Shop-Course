@@ -48,9 +48,9 @@ class OrderCheckOutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
         print(f"Order Total Price after adding items Without consideration coupon: {order.total_price}")
 
         # اضافه کردن کاربر به لیست استفاده‌کنندگان از کد تخفیف
-        coupon.used_by.add(user)
-        coupon.save()
-
+        if coupon:
+            coupon.used_by.add(user)
+            coupon.save()
         order.save()
     
         # هدایت به درگاه پرداخت

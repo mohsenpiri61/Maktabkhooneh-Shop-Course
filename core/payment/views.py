@@ -10,6 +10,7 @@ from order.models import OrderModel, OrderStatusType
 
 class PaymentVerifyView(View):
     def get(self, request, *args, **kwargs):
+        # دریافت پارامترهای ارسال شده به مرورگر
         authority_id = request.GET.get("Authority")
         status = request.GET.get("Status")
 

@@ -15,7 +15,7 @@ class ZarinPalSandbox:
     _payment_request_url = "https://sandbox.zarinpal.com/pg/v4/payment/request.json"
     _payment_verify_url = "https://sandbox.zarinpal.com/pg/v4/payment/verify.json"
     _payment_page_url = "https://sandbox.zarinpal.com/pg/StartPay/"
-    _callback_url = "https://b113-157-90-171-202.ngrok-free.app/payment/verify"
+    _callback_url = "https://b113-157-90-171-202.ngrok-free.app/payment/verify"  # ngrok
 
     def __init__(self, merchant_id=settings.MERCHANT_ID):
         self.merchant_id = merchant_id

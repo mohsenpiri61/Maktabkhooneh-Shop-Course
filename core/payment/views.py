@@ -17,7 +17,7 @@ class PaymentVerifyView(View):
         # بازیابی اطلاعات پرداخت
         payment_obj = get_object_or_404(PaymentModel, authority_id=authority_id)
         
-        # مقداردهی زرین‌پال
+        # مقداردهی به زرین پال و دریافت پاسخ از زرین پال به منظور اطمینان از موفقیت آمیز بودن پرداخت
         zarin_pal = ZarinPalSandbox() 
         response = zarin_pal.payment_verify(int(payment_obj.amount), payment_obj.authority_id)
         

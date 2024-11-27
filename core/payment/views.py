@@ -10,17 +10,17 @@ from order.models import OrderModel, OrderStatusType
 
 class PaymentVerifyView(View):
     def get(self, request, *args, **kwargs):
-        authority_id = request.GET.get("Authority")
-        status = request.GET.get("Status")
+        authority_id = request.GET.get("authority")
+        status = request.GET.get("code")
 
         payment_obj = get_object_or_404(
-            PaymentModel, authority_id=authority_id)
+            PaymentModel, authority_id=authority)
         order = OrderModel.objects.get(payment=payment_obj)
         zarin_pal = ZarinPalSandbox() 
         response = zarin_pal.payment_verify(
             int(payment_obj.amount), payment_obj.authority_id)
-        ref_id = response["RefID"]
-        status_code = response["Status"]
+        ref_id = response["ref_id"]
+        status_code = response["code"]
 
         payment_obj.ref_id = ref_id
         payment_obj.response_code = status_code

@@ -94,7 +94,6 @@ class OrderCheckOutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
             )
             order.total_price = order.calculate_total_price() 
             order.save()
-
     
 
     def clear_cart(self, cart):

@@ -3,10 +3,10 @@ from django.contrib import messages
 from django.urls import reverse, reverse_lazy
 from django.views.generic.edit import FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
-
 from .forms import CheckOutForm
-from .models import CartModel, OrderModel, OrderItemModel, UserAddressModel
-from .services import SepalPaymentGateway
+from cart.models import CartModel
+from .models import OrderModel, OrderItemModel, UserAddressModel
+from payment.sepal import SepalPaymentGateway
 from .permissions import HasCustomerAccessPermission
 
 
@@ -70,7 +70,7 @@ class OrderCheckOutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
     def _create_payment_url(self, order):
         """ایجاد لینک پرداخت سپال."""
         try:
-            payment_url = SepalPaymentGateway(api_key="YOUR-API-KEY").payment_request(
+            payment_url = SepalPaymentGateway(api_key="test").payment_request(
                 amount=order.calculate_total_price(),
                 invoice_number=str(order.id),
                 description=f"پرداخت برای سفارش شماره {order.id}",

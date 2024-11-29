@@ -1,4 +1,3 @@
-from django.http import HttpResponse
 from django.views.generic import (
     TemplateView,
     FormView,
@@ -11,7 +10,6 @@ from cart.models import CartModel, CartItemModel
 from order.models import OrderModel, OrderItemModel, CouponModel, UserAddressModel
 from django.urls import reverse_lazy
 from cart.cart import CartSession
-from decimal import Decimal
 from django.http import JsonResponse
 from django.utils import timezone
 from django.shortcuts import redirect

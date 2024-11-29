@@ -44,8 +44,6 @@ class PaymentVerifyView(View):
             field_value = getattr(payment_obj, field_name, None)
             print(f"{field_name}: {field_value}")
 
-
-        
         # بروزرسانی وضعیت سفارش مرتبط
         order = OrderModel.objects.get(payment=payment_obj)
         order.status = OrderStatusType.PAID.value if status_code in {

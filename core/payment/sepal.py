@@ -6,61 +6,59 @@ from django.conf import settings
 
 
 class SepalPaymentGateway:
-    API_KEY = "test"  # در حالت تست
-    REQUEST_URL = "https://sepal.ir/api/sandbox/request.json"
-    PAYMENT_URL = "https://sepal.ir/sandbox/payment/"
-    VERIFY_URL = "https://sepal.ir/api/sandbox/verify.json"
-    CALLBACK_URL = "http://127.0.0.1:8000/order/verify/"
+    _request_url = "https://sepal.ir/api/sandbox/request.json"
+    _payment_url = "https://sepal.ir/sandbox/payment/"
+    _verify_url = "https://sepal.ir/api/sandbox/verify.json"
+    _callback_url = "http://127.0.0.1:8000/"
     
-    @staticmethod
-    def create_payment(order):
-        """ایجاد درخواست پرداخت در سپال"""
+    def __init__(self, api_key):
+        self.api_key = api_key
+
+    def payment_request(self, amount, invoice_number="123", description="پرداخت سفارش", payer_name=None, payer_mobile=None, payer_email=None):
+        """
+        ارسال درخواست پرداخت به سپال.
+        """
+        payload = {
+            "apiKey": self.api_key,
+            "amount": str(amount),
+            "callbackUrl": self._callback_url,
+            "invoiceNumber": invoice_number,
+            "payerName": payer_name,
+            "payerMobile": payer_mobile,
+            "payerEmail": payer_email,
+            "description": description,
+        }
+        headers = {
+            "Content-Type": "application/json"
+        }
+
+        response = requests.post(self._request_url, headers=headers, json=payload, verify=False)
+        response_dict = response.json()
         
-        params = {
-            "apiKey": SepalPaymentGateway.API_KEY,
-            "amount": str(order.get_price()),  # مبلغ پرداخت به ریال
-            "callbackUrl": CALLBACK_URL,
-            "invoiceNumber": "123",  # شماره فاکتور
-            # "payerName": order.user.get_full_name(),  # نام پرداخت‌کننده
-            # "payerMobile": order.user.profile.mobile,  # موبایل پرداخت‌کننده
-            # "payerEmail": order.user.email,  # ایمیل پرداخت‌کننده
-            # "description": f"پرداخت برای سفارش شماره {order.id}",
-        }
+        if response_dict.get("status") == 1:
+            # پرداخت موفق ایجاد شده است
+            return response_dict["paymentNumber"]
+        else:
+            raise ValueError(f"خطا در ایجاد پرداخت: {response_dict.get('message', 'خطای ناشناخته')}")
 
-        try:
-            response = requests.post(
-                SepalPaymentGateway.REQUEST_URL, 
-                json=params,
-                headers={"Content-Type": "application/json"},
-                verify=False
-            )
-            data = response.json()
-            if data.get("status") == 1:
-                # ایجاد آدرس پرداخت
-                payment_url = f"{SepalPaymentGateway.PAYMENT_URL}{data.get('paymentNumber')}"
-                return payment_url
-            else:
-                raise ValueError(data.get("message", "خطای نامشخص در ایجاد پرداخت"))
-        except Exception as e:
-            raise ValueError(f"خطا در ارتباط با درگاه سپال: {e}")
-            print(paymentNumber)
-    @staticmethod
-    def verify_payment(payment_number, amount):
-        """تایید وضعیت پرداخت"""
-        params = {
-            "apiKey": SepalPaymentGateway.API_KEY,
+    def payment_verify(self, payment_number, invoice_number):
+        """
+        بررسی وضعیت پرداخت.
+        """
+        payload = {
+            "apiKey": self.api_key,
             "paymentNumber": payment_number,
-            "invoiceNumber": str(amount),
+            "invoiceNumber": str(invoice_number),
+        }
+        headers = {
+            "Content-Type": "application/json"
         }
 
-        try:
-            response = requests.post(
-                SepalPaymentGateway.VERIFY_URL, 
-                json=params,
-                headers={"Content-Type": "application/json"},
-                verify=False
-            )
-            data = response.json()
-            return data
-        except Exception as e:
-            raise ValueError(f"خطا در تایید پرداخت سپال: {e}")
+        response = requests.post(self._verify_url, headers=headers, json=payload, verify=False)
+        return response.json()
+
+    def generate_payment_url(self, payment_number):
+        """
+        تولید لینک پرداخت.
+        """
+        return f"{self._payment_url}{payment_number}"

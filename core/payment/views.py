@@ -34,7 +34,13 @@ class PaymentVerifyView(View):
             100, 101} else PaymentStatusType.failed.value
         payment_obj.response_json = response
         payment_obj.save()
-        print(payment_obj.response_json)
+        
+        # مشاهده اطلاعات نمونه در کنسول (payment_obj)
+        for field in payment_obj._meta.get_fields():
+            field_name = field.name
+            field_value = getattr(payment_obj, field_name, None)
+            print(f"{field_name}: {field_value}")
+        
         # بروزرسانی وضعیت سفارش مرتبط
         order = OrderModel.objects.get(payment=payment_obj)
         order.status = OrderStatusType.PAID.value if status_code in {

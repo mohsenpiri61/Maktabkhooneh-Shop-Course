@@ -20,7 +20,7 @@ class SepalPaymentGateway:
             "apiKey": SepalPaymentGateway.API_KEY,
             "amount": str(order.get_price()),  # مبلغ پرداخت به ریال
             "callbackUrl": CALLBACK_URL,
-            "invoiceNumber": str(order.id),  # شماره فاکتور
+            "invoiceNumber": "123",  # شماره فاکتور
             # "payerName": order.user.get_full_name(),  # نام پرداخت‌کننده
             # "payerMobile": order.user.profile.mobile,  # موبایل پرداخت‌کننده
             # "payerEmail": order.user.email,  # ایمیل پرداخت‌کننده
@@ -50,7 +50,7 @@ class SepalPaymentGateway:
         params = {
             "apiKey": SepalPaymentGateway.API_KEY,
             "paymentNumber": payment_number,
-            "amount": str(amount),
+            "invoiceNumber": str(amount),
         }
 
         try:

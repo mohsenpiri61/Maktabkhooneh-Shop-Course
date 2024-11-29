@@ -9,10 +9,11 @@ class PaymentStatusType(models.IntegerChoices):
 
 # Create your models here.
 class PaymentModel(models.Model):
-    
-    paymentnumber = models.BigIntegerField(null=True,blank=True)
+    authority_id = models.CharField(max_length=255, null=True,blank=True)
+    ref_id = models.BigIntegerField(null=True,blank=True)
     amount = models.DecimalField(default=0,max_digits=10,decimal_places=0)
     response_json = JSONField(default=dict)
+    response_code = models.IntegerField(null=True,blank=True)
     status = models.IntegerField(choices=PaymentStatusType.choices,default=PaymentStatusType.pending.value)
     
     
@@ -20,4 +21,4 @@ class PaymentModel(models.Model):
     updated_date = models.DateTimeField(auto_now=True)
     
     def __str__(self):
-        return f"Payment {self.amount} تومان"
+        return self.authority_id

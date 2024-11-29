@@ -21,4 +21,4 @@ class PaymentModel(models.Model):
     updated_date = models.DateTimeField(auto_now=True)
     
     def __str__(self):
-        return self.authority_id
+        return f"Payment {self.authority_id} - {self.amount} تومان"

@@ -37,9 +37,14 @@ class PaymentVerifyView(View):
         
         # مشاهده اطلاعات نمونه در کنسول (payment_obj)
         for field in payment_obj._meta.get_fields():
+            # فیلدهایی که مستقیم نیستند (یعنی رابطه معکوس هستند) را رد کن
+            if not field.concrete:
+                continue
             field_name = field.name
             field_value = getattr(payment_obj, field_name, None)
             print(f"{field_name}: {field_value}")
+
+
         
         # بروزرسانی وضعیت سفارش مرتبط
         order = OrderModel.objects.get(payment=payment_obj)

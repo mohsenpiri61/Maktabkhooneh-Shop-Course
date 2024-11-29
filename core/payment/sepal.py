@@ -10,20 +10,21 @@ class SepalPaymentGateway:
     REQUEST_URL = "https://sepal.ir/api/sandbox/request.json"
     PAYMENT_URL = "https://sepal.ir/sandbox/payment/"
     VERIFY_URL = "https://sepal.ir/api/sandbox/verify.json"
-
+    CALLBACK_URL = "http://127.0.0.1:8000/order/verify/"
+    
     @staticmethod
     def create_payment(order):
         """ایجاد درخواست پرداخت در سپال"""
-        callback_url = settings.SEPAL_CALLBACK_URL  # آدرس بازگشت تنظیم‌شده در تنظیمات
+        
         params = {
             "apiKey": SepalPaymentGateway.API_KEY,
             "amount": str(order.get_price()),  # مبلغ پرداخت به ریال
-            "callbackUrl": callback_url,
-            # "invoiceNumber": str(order.id),  # شماره فاکتور
+            "callbackUrl": CALLBACK_URL,
+            "invoiceNumber": str(order.id),  # شماره فاکتور
             # "payerName": order.user.get_full_name(),  # نام پرداخت‌کننده
             # "payerMobile": order.user.profile.mobile,  # موبایل پرداخت‌کننده
             # "payerEmail": order.user.email,  # ایمیل پرداخت‌کننده
-            "description": f"پرداخت برای سفارش شماره {order.id}",
+            # "description": f"پرداخت برای سفارش شماره {order.id}",
         }
 
         try:

@@ -192,5 +192,3 @@ SANDBOX_MODE = config("SANDBOX_MODE", cast=bool, default=True)
 SITE_DOMAIN = "127.0.0.1:8000"  # دامنه و پورت مورد نظر
 SITE_PROTOCOL = "http"  # در صورت استفاده از HTTPS، آن را به "https" تغییر دهید 
 
-
-SEPAL_CALLBACK_URL = "http://127.0.0.1/order/verify/"

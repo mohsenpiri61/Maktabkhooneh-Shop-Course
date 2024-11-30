@@ -43,7 +43,6 @@ class OrderCheckOutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
         self.create_order_items(order, cart)
         self.clear_cart(cart)
         order.total_price = order.calculate_total_price()
-        print(f"Order Total Price after adding items Without consideration coupon: {order.total_price}")
 
         # اضافه کردن کاربر به لیست استفاده‌کنندگان از کد تخفیف
         if coupon:

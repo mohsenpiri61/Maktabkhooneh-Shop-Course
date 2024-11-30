@@ -16,8 +16,6 @@ from order.models import OrderModel, OrderItemModel, CouponModel, UserAddressMod
 from cart.models import CartModel, CartItemModel
 from payment.zarinpal_client import ZarinPalSandbox
 from payment.models import PaymentModel
-from django.utils import timezone
-from decimal import Decimal
 
 User = get_user_model()
 

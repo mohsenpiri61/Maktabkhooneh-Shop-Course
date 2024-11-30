@@ -1,11 +1,9 @@
-from django.shortcuts import render
 from django.views.generic import View
 from .models import PaymentModel, PaymentStatusType
 from django.urls import reverse_lazy
 from django.shortcuts import redirect, get_object_or_404
 from .zarinpal_client import ZarinPalSandbox
 from order.models import OrderModel, OrderStatusType
-
 
 
 class PaymentVerifyView(View):
@@ -23,10 +21,9 @@ class PaymentVerifyView(View):
         
         # استخراج داده‌های پاسخ
         data = response.get("data", {})
-        errors = response.get("errors", [])
-        status_code = data.get("code", -1)
+        status_code = data.get("code", 3)
         ref_id = data.get("ref_id")
-        
+
         # ثبت اطلاعات پرداخت در مدل
         payment_obj.ref_id = ref_id
         payment_obj.response_code = status_code

@@ -1,7 +1,7 @@
 import requests
 import json
 from django.conf import settings
-from django.contrib.sites.models import Site
+
 
 def get_domain():
     from django.contrib.sites.models import Site

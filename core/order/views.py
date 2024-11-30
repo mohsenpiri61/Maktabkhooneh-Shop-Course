@@ -61,10 +61,9 @@ class OrderCheckOutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
         zarinpal = ZarinPalSandbox()
         authority = zarinpal.payment_request(order.get_price())
         print(f"Final Payable Price applying coupon: {order.get_price()}")
-        payment_obj = PaymentModel.objects.create(
-            authority_id=authority,
-            amount=order.get_price(),
-        )
+
+        # ذخیره اطلاعات پرداختو ایجاد ارتباط بین سفارش و پرداخت، قبل از هدایت به درگاه
+        payment_obj = PaymentModel.objects.create(authority_id=authority, amount=order.get_price())
         order.payment = payment_obj
         order.save()
         return zarinpal.generate_payment_url(authority)

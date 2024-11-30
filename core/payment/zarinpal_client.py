@@ -57,5 +57,5 @@ class ZarinPalSandbox:
         response = requests.post(self._payment_verify_url, headers=headers, data=json.dumps(payload))
         return response.json()
 
-    def generate_payment_url(self,authority):
+    def generate_payment_url(self, authority):
         return f"{self._payment_page_url}{authority}"

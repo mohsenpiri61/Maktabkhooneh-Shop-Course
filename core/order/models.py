@@ -57,9 +57,7 @@ class OrderModel(models.Model):
 
     def calculate_total_price(self):
         return sum(item.price * item.quantity for item in self.order_items.all())
-
-
-    
+ 
     
     def __str__(self):
         return f"{self.user.email} - {self.id}"
@@ -72,7 +70,8 @@ class OrderModel(models.Model):
             "label": OrderStatusType(self.status).label,
         }
 
-
+    def get_full_address(self):
+        return f"{self.state}, {self.city}, {self.address}"
 
     @property
     def is_successful(self):

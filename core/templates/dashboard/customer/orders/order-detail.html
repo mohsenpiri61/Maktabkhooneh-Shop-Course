@@ -99,7 +99,7 @@
           <dt class="col-md-3"> آدرس:</dt>
           <dl class="col-md-3">{{object.address.get_full_address}}</dl>
           <dt class="col-md-3"> کد پستی:</dt>
-          <dl class="col-md-3">{{object.zip_code}}</dl>
+          <dl class="col-md-3">{{object.address.zip_code}}</dl>
         </div>
         <div class=" d-flex pt-5 justify-content-end">
           <a class="btn btn-secondary ms-3" href="{% url 'dashboard:customer:order-list' %}">بازگشت</a>

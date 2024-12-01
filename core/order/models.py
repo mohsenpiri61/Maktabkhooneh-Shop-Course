@@ -70,8 +70,6 @@ class OrderModel(models.Model):
             "label": OrderStatusType(self.status).label,
         }
 
-    def get_full_address(self):
-        return f"{self.state}, {self.city}, {self.address}"
 
     @property
     # برای نمایش مبلغ پرداخت شده نه مبلغ سفارش (در صورت کوپن این دو متفاوت خواهند بود)

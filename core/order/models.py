@@ -74,6 +74,7 @@ class OrderModel(models.Model):
         return f"{self.state}, {self.city}, {self.address}"
 
     @property
+    # برای نمایش مبلغ پرداخت شده نه مبلغ سفارش (در صورت کوپن این دو متفاوت خواهند بود)
     def is_successful(self):
         return self.status == OrderStatusType.PAID.value
 

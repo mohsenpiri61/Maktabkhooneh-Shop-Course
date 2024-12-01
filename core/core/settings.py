@@ -191,3 +191,13 @@ SANDBOX_MODE = config("SANDBOX_MODE", cast=bool, default=True)
 #Activation of new user account
 SITE_DOMAIN = "127.0.0.1:8000"  # دامنه و پورت مورد نظر
 SITE_PROTOCOL = "http"  # در صورت استفاده از HTTPS، آن را به "https" تغییر دهید
+
+
+CSRF_TRUSTED_ORIGINS = [
+    
+    'https://a23f-5-237-59-144.ngrok-free.app',
+    'https://sandbox.zarinpal.com/',
+   
+]
+
+CSRF_COOKIE_SECURE = True

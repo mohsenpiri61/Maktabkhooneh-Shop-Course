@@ -74,7 +74,7 @@
       <form>
         <div class="row mb-3 align-items-center">
           <dt class="col-md-3">سفارش دهنده:</dt>
-          <dl class="col-md-3">{{request.user.user_profile.get_fullname}}</dl>
+          <dl class="col-md-3">{{object.user.user_profile.get_fullname}}</dl>
           <dt class="col-md-3">وضعیت سفارش:</dt>
           <dl class="col-md-3 ">{{object.get_status.label}}</dl>
         </div>

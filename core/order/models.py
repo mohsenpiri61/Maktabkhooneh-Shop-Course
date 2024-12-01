@@ -64,7 +64,7 @@ class OrderModel(models.Model):
     def __str__(self):
         return f"{self.user.email} - {self.id}"
 
-    # برای نمایش وضعیت سفارش به صورت حرفی ( پرداخت شده، در انتظار پرداخت و لغو شده )
+    # برای نمایش وضعیت سفارش در "لیست سفارشات"  به صورت حرفی ( پرداخت شده، در انتظار پرداخت و لغو شده )
     def get_status(self):
         return {
             "id": self.status,

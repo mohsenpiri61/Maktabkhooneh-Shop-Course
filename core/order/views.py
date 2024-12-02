@@ -49,10 +49,7 @@ class OrderCheckOutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
                    
         #  ایجاد سفارش و اضافه کردن آیتم های سفارش
         order = self.create_order(user, address, coupon)
-        self.create_order_items(order, cart, self.request)
-
-            
-            
+        self.create_order_items(order, cart, self.request)         
          
         #  پاک کردن سبد خرید
         self.clear_cart(cart)
@@ -97,7 +94,7 @@ class OrderCheckOutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
     
     def create_order_items(self, order, cart, request):
         for item in cart.cart_items.all():
-            print(f"Cart Item: {item.product.stock}, Price: {item.product.get_price()}, Quantity: {item.quantity}")
+            print(f"Product Stock:{item.product.stock}, Price: {item.product.get_price()}, Quantity: {item.quantity}")
             if item.product.stock < item.quantity:
                 messages.error(request, f"موجودی محصول '{item.product.title}' کافی نیست.")
                 return redirect('cart:cart-summary')                

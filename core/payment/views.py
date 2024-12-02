@@ -14,8 +14,8 @@ class PaymentVerifyView(View):
         order.status = OrderStatusType.CANCELED.value
         
         for item in order.order_items.all():
-            print('stock before def:', item.product.stock )
-            print('count must be rollbacked', item.quantity)
+            print(f"The count of product before rollingback for {item.product.title} is: {item.product.stock}")
+            print(f"The count of product after rollingback for {item.product.title} must be: { item.quantity}")
             item.product.stock += item.quantity
             item.product.save()
             print('the count of prod after failed is:', item.product.stock)         

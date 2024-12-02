@@ -35,12 +35,24 @@ class OrderCheckOutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
         cleaned_data = form.cleaned_data
         address = cleaned_data['address_id']
         coupon = cleaned_data['coupon']
-                
-        #  ایجاد سفارش و اضافه کردن آیتم های سفارش
         cart = CartModel.objects.get(user=user)
+        
+        
+    # کنترل موجودی هر محصول در سبد خرید
+        for item in cart.cart_items.all():
+            if item.product.stock < item.quantity:
+                form.add_error(None, f"موجودی محصول {item.product.name} کافی نیست.")
+                return self.form_invalid(form)  
+                  
+        #  ایجاد سفارش و اضافه کردن آیتم های سفارش
         order = self.create_order(user, address, coupon)
         self.create_order_items(order, cart, self.request)
 
+        # کاهش موجودی محصولات
+        for item in cart.cart_items.all():
+            item.product.stock -= item.quantity
+            item.product.save()
+         
         #  پاک کردن سبد خرید
         self.clear_cart(cart)
         
@@ -55,7 +67,7 @@ class OrderCheckOutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
     
         # هدایت به درگاه پرداخت
         return redirect(self.create_payment_url(order))
-    
+        
     
     def create_payment_url(self, order):
         """ایجاد لینک پرداخت با استفاده از درگاه زرین‌پال"""

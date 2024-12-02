@@ -46,18 +46,20 @@ class CheckOutForm(forms.Form):
 
         return coupon
     
-    def clean_product_stock(self):
-        """بررسی موجودی محصولات سبد خرید"""
-        cleaned_data = super().clean()
-        user = self.request.user
+    # def clean_product_stock(self):
+    #     """بررسی موجودی محصولات سبد خرید"""
+    #     cleaned_data = super().clean()
+    #     user = self.request.user
 
-        cart = CartModel.objects.filter(user=user).first()
-        if not cart or not cart_items.exists():
-            raise forms.ValidationError("سبد خرید شما خالی است.")
+    #     cart = CartModel.objects.filter(user=user).first()
+    #     if not cart or not cart_items.exists():
+    #         raise forms.ValidationError("سبد خرید شما خالی است.")
 
-        for item in cart_items.all():
-            if item.product.stock < item.quantity:
-                raise forms.ValidationError(
-                    f"موجودی محصول {item.product.title} کافی نیست. (موجودی فعلی: {item.product.stock})"
-                )
-        return cleaned_data
+    #     for item in cart_items.all():
+    #         if item.product.stock < item.quantity:
+    #             raise forms.ValidationError(
+    #                 f"موجودی محصول {item.product.title} کافی نیست. (موجودی فعلی: {item.product.stock})"
+    #             )
+                
+    #     print('sfdfsfsdfds')        
+    #     return cleaned_data

@@ -11,9 +11,18 @@ class SessionAddProductView(View):
     def post(self, request, *args, **kwargs):
         cart = CartSession(request.session)
         product_id = request.POST.get("product_id")
-        if product_id and ProductModel.objects.filter(id=product_id, status=ProductStatusType.publish.value).exists():
+        product_obj =  ProductModel.objects.get(id=product_id, status=ProductStatusType.publish.value)
+        
+         # بررسی موجودی محصول
+        if product_obj.stock <= 0:
+            return JsonResponse({"error": f"محصول '{product_obj.title}' موجود نیست."}, status=400)
+       
+        # اضافه کردن محصول به سبد خرید 
+        product_obj_added = cart.add_product(product_id, product_obj.stock)
+        if not product_obj_added:
+            return JsonResponse({"error": f"موجودی کافی برای محصول '{product_obj.title}' وجود ندارد."}, status=400)
 
-            cart.add_product(product_id)
+        # ادغام سبد خرید session با دیتابیس (در صورت احراز هویت کاربر)
         if request.user.is_authenticated:
             cart.merge_session_cart_in_db(request.user)
         return JsonResponse({"cart": cart.get_cart_dict(), "total_quantity": cart.get_total_quantity()})

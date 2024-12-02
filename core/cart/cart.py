@@ -25,15 +25,21 @@ class CartSession:
             return
         self.save()
 
-    def add_product(self, product_id):
+    def add_product(self, product_id, stock):
         for item in self._cart["items"]:
             if product_id == item["product_id"]:
+                if item["quantity"] + 1 > stock:  # بررسی موجودی کافی
+                    return False
                 item["quantity"] += 1
-                break
+                self.save()
+                return True
         else:
+            if stock <= 0:  # بررسی موجودی برای آیتم جدید
+                return False
             new_item = {"product_id": product_id, "quantity": 1}
             self._cart["items"].append(new_item)
-        self.save()
+            self.save()
+            return True
 
     def clear(self):
         self._cart = self.session["cart"] = {"items": []}

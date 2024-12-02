@@ -578,8 +578,21 @@
     <script src="{% static 'js/custom.js' %}"></script>
     <!-- JS Cart-->
     <script>
+        $(document).ready(function () {
+            function showToast(message, color = "#28a745") {
+                Toastify({
+                    text: message,
+                    duration: 3000,
+                    gravity: "top", // نمایش در بالا
+                    position: "center", // موقعیت در وسط
+                    backgroundColor: color, // رنگ پس‌زمینه
+                    close: true, // نمایش دکمه بستن
+                }).showToast();
+            }
+        
+        
         function addToCart(product_id) {
-     
+ 
             //console.log(product_id)
             $.ajax({
                 url: "{%  url 'cart:session-add-product' %}",
@@ -592,8 +605,8 @@
                 // به‌روزرسانی تعداد آیتم‌های سبد خرید
                 success: function (response) {
                     $("#total-cart-item-count").html(response.total_quantity)
-                    console.log(response);
-                    // do something with the response data
+                    console.log("محصول با موفقیت اضافه شد.");
+                   
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     console.log(errorThrown);

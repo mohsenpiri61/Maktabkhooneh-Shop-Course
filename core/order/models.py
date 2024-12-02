@@ -7,7 +7,7 @@ class OrderStatusType(models.IntegerChoices):
     PENDING = 1, "در انتظار پرداخت"
     PAID = 2, "پرداخت شده"
     CANCELED = 3, "لغو شده"
-    READYTOPAYMENT=4, "آماده پرداخت"
+    
 
 class UserAddressModel(models.Model):
     user = models.ForeignKey('accounts.User', on_delete=models.CASCADE)

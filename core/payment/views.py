@@ -9,41 +9,19 @@ from order.models import OrderModel, OrderStatusType
 class PaymentVerifyView(View):
     
     
-    def rollback_stock(self, order):
-        """بازگرداندن موجودی محصولات در صورت شکست پرداخت"""
-        # ابتدا بررسی موجودی برای تمام آیتم‌ها
-        insufficient_stock = False
-
-        for item in order.order_items.all():
-            # اگر موجودی محصول کمتر از تعداد درخواست‌شده باشد، موجودی کافی نیست
-            if item.product.stock < item.quantity:
-                insufficient_stock = True
-                print(f"موجودی محصول {item.product.title} کافی نیست. کسر موجودی متوقف می‌شود.")
-                break  # اگر یک آیتم موجودی کافی ندارد، بررسی را متوقف می‌کنیم
-
-        if insufficient_stock:
-            return  # اگر حتی یک آیتم موجودی کافی نداشت، کسر موجودی انجام نمی‌شود.
-
-        # اگر تمامی آیتم‌ها موجودی کافی دارند، کسر موجودی انجام می‌شود
-        for item in order.order_items.all():
-            # جلوگیری از کسر موجودی به زیر صفر
-            if item.product.stock >= item.quantity:
-                item.product.stock += item.quantity
-                item.product.save()
-            else:
-                print(f"موجودی کافی برای محصول {item.product.title} وجود ندارد. کسر موجودی انجام نمی‌شود.")
-            
-            
     def payment_failed(self, order):
-        """کنترل شکست پرداخت"""
-        # بازگرداندن موجودی محصولات در صورتی که پرداخت شکست خورده باشد
-        self.rollback_stock(order)
-
-        # تنظیم وضعیت سفارش به شکست خورده
+        """بازگرداندن موجودی محصولات در صورت شکست پرداخت"""
         order.status = OrderStatusType.CANCELED.value
+        
+        for item in order.order_items.all():
+            print('stock before def:', item.product.stock )
+            print('count must be rollbacked', item.quantity)
+            item.product.stock += item.quantity
+            item.product.save()
+            print('the count of prod after failed is:', item.product.stock)         
         order.save()
         
-    
+        
     def get(self, request, *args, **kwargs):
         # دریافت پارامترهای ارسال شده به مرورگر
         authority_id = request.GET.get("Authority")
@@ -68,6 +46,7 @@ class PaymentVerifyView(View):
             100, 101} else PaymentStatusType.failed.value
         payment_obj.response_json = response
         payment_obj.save()
+     
         
         # مشاهده اطلاعات نمونه در کنسول (payment_obj)
         for field in payment_obj._meta.get_fields():
@@ -80,10 +59,10 @@ class PaymentVerifyView(View):
 
         # بروزرسانی وضعیت سفارش مرتبط
         order = OrderModel.objects.get(payment=payment_obj)
-        if status_code in {100, 101}:
+        if payment_obj.response_code in {100, 101}:
             order.status = OrderStatusType.PAID.value
         else:
-            # اگر پرداخت ناموفق بود، عملیات شکست را مدیریت کنید
+            # تنظیم وضعیت سفارش به شکست خورده
             self.payment_failed(order)
 
         order.save()       

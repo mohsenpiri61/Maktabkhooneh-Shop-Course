@@ -235,7 +235,7 @@
                            
                             {% if object.stock > 0 %}
                                 <button type="button" class="btn btn-outline-primary btn-sm btn-transition"
-                                    onclick="addToCart('{{object.id}}')">افزودن به سبد خرید</button>
+                                    onclick="addToCart('{{object.id}}')" data-product-id="{{ object.id }}">افزودن به سبد خرید</button>
 
                             {% else %}
                                  <button type="button" class="out-of-stock-btn" disabled>اتمام موجودی</button>

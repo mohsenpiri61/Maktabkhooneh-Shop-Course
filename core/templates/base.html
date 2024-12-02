@@ -578,42 +578,46 @@
     <script src="{% static 'js/custom.js' %}"></script>
     <!-- JS Cart-->
     <script>
-        $(document).ready(function () {
-            function showToast(message, color = "#28a745") {
-                Toastify({
-                    text: message,
-                    duration: 3000,
-                    gravity: "top", // نمایش در بالا
-                    position: "center", // موقعیت در وسط
-                    backgroundColor: color, // رنگ پس‌زمینه
-                    close: true, // نمایش دکمه بستن
-                }).showToast();
-            }
-        
-        
         function addToCart(product_id) {
- 
-            //console.log(product_id)
             $.ajax({
-                url: "{%  url 'cart:session-add-product' %}",
-                method: 'POST',
-                data: {
-                    product_id: product_id,
-                    csrfmiddlewaretoken: '{{ csrf_token }}'
-        
+                url: "{% url 'cart:session-add-product' %}",
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
                 },
-                // به‌روزرسانی تعداد آیتم‌های سبد خرید
+                data: { product_id: product_id },
                 success: function (response) {
-                    $("#total-cart-item-count").html(response.total_quantity)
-                    console.log("محصول با موفقیت اضافه شد.");
-                   
+                    Toastify({
+                        text: "محصول به سبد خرید اضافه شد.",
+                        backgroundColor: "#28a745",
+                        duration: 3000,
+                        close: true,
+                    }).showToast();
+                    $("#total-cart-item-count").html(response.total_quantity);
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    console.log(errorThrown);
-                    // handle the error case
-                }
+                error: function (xhr) {
+                    const errorMessage = xhr.responseJSON
+                        ? xhr.responseJSON.error
+                        : "خطایی رخ داده است.";
+                    Toastify({
+                        text: errorMessage,
+                        backgroundColor: "#dc3545",
+                        duration: 3000,
+                        close: true,
+                    }).showToast();
+                },
             });
         }
+        
+        $(document).ready(function () {
+            $(".add-to-cart-btn").click(function () {
+                const product_id = $(this).data("product-id");
+                addToCart(product_id);
+            });
+        });
+        
+          
+        
         function addToWishlist(element,product_id) {
      
             //console.log(product_id)
@@ -635,12 +639,9 @@
                         }
                       }).showToast();
                     $(element).toggleClass('active');
-
-                    // do something with the response data
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     console.log(errorThrown);
-                    // handle the error case
                 }
             });
         }

@@ -15,6 +15,7 @@ from django.utils import timezone
 from django.shortcuts import redirect
 from payment.zarinpal_client import ZarinPalSandbox
 from payment.models import PaymentModel
+from django.contrib import messages
 
 
 class OrderCheckOutView(LoginRequiredMixin, HasCustomerAccessPermission, FormView):
@@ -35,13 +36,15 @@ class OrderCheckOutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
         address = cleaned_data['address_id']
         coupon = cleaned_data['coupon']
                 
-        # ایجاد سفارش
+        #  ایجاد سفارش و اضافه کردن آیتم های سفارش
         cart = CartModel.objects.get(user=user)
         order = self.create_order(user, address, coupon)
-        
-        # اضافه کردن آیتم‌های سفارش و پاک کردن سبد خرید
-        self.create_order_items(order, cart)
+        self.create_order_items(order, cart, self.request)
+
+        #  پاک کردن سبد خرید
         self.clear_cart(cart)
+        
+        # محاسبه قیمت نهایی
         order.total_price = order.calculate_total_price()
 
         # اضافه کردن کاربر به لیست استفاده‌کنندگان از کد تخفیف
@@ -61,7 +64,7 @@ class OrderCheckOutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
         authority = zarinpal.payment_request(order.get_price())
         print(f"Final Payable Price applying coupon: {order.get_price()}")
 
-        # ذخیره اطلاعات پرداختو ایجاد ارتباط بین سفارش و پرداخت، قبل از هدایت به درگاه
+        # ذخیره اطلاعات پرداخت و ایجاد ارتباط بین سفارش و پرداخت، قبل از هدایت به درگاه
         payment_obj = PaymentModel.objects.create(authority_id=authority, amount=order.get_price())
         order.payment = payment_obj
         order.save()
@@ -79,15 +82,25 @@ class OrderCheckOutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
         return order
     
     
-    def create_order_items(self, order, cart):
+    def create_order_items(self, order, cart, request):
         for item in cart.cart_items.all():
-            print(f"Cart Item: {item.product.title}, Price: {item.product.get_price()}, Quantity: {item.quantity}")
+            print(f"Cart Item: {item.product.stock}, Price: {item.product.get_price()}, Quantity: {item.quantity}")
+            if item.product.stock < item.quantity:
+                messages.error(request, f"موجودی محصول '{item.product.title}' کافی نیست.")
+                return redirect('cart:cart-summary')                
+                
             OrderItemModel.objects.create(
                 order=order,
                 product=item.product,
                 quantity=item.quantity,
                 price=item.product.get_price(),
             )
+            
+            # کاهش موجودی محصول
+            item.product.stock -= item.quantity
+            item.product.save()
+         
+            # محاسبه و ذخیره قیمت نهایی سفارش
             order.total_price = order.calculate_total_price() 
             order.save()
     

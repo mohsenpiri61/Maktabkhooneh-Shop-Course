@@ -586,6 +586,7 @@
                     "X-CSRFToken": "{{ csrf_token }}",
                 },
                 data: { product_id: product_id },
+                
                 success: function (response) {
                     Toastify({
                         text: "محصول به سبد خرید اضافه شد.",
@@ -593,6 +594,8 @@
                         duration: 3000,
                         close: true,
                     }).showToast();
+
+                    // به‌روزرسانی تعداد آیتم‌ها در سبد خرید
                     $("#total-cart-item-count").html(response.total_quantity);
                 },
                 error: function (xhr) {
@@ -608,15 +611,15 @@
                 },
             });
         }
-        
+
+        // اضافه کردن عملکرد به دکمه‌ها
         $(document).ready(function () {
             $(".add-to-cart-btn").click(function () {
                 const product_id = $(this).data("product-id");
                 addToCart(product_id);
             });
         });
-        
-          
+     
         
         function addToWishlist(element,product_id) {
      

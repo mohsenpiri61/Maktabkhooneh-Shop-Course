@@ -51,7 +51,7 @@ class OrderCheckOutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
                  
         #  ایجاد سفارش و اضافه کردن آیتم های سفارش
         order = self.create_order(user, address, coupon)
-        self.create_order_items(order, cart, self.request)         
+        self.create_order_items(order, cart)         
          
         #  پاک کردن سبد خرید
         self.clear_cart(cart)
@@ -94,7 +94,7 @@ class OrderCheckOutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
         return order
     
     
-    def create_order_items(self, order, cart, request):
+    def create_order_items(self, order, cart):
         for item in cart.cart_items.all():
             print(f"Product Stock Remainder:{item.product.stock}, Price: {item.product.get_price()}, Quantity: {item.quantity}")              
             OrderItemModel.objects.create(

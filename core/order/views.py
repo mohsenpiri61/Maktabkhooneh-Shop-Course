@@ -108,10 +108,6 @@ class OrderCheckOutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
                 price=item.product.get_price(),
             )
             
-            # کاهش موجودی محصول
-            item.product.stock -= item.quantity
-            item.product.save()
-         
             # محاسبه و ذخیره قیمت نهایی سفارش
             order.total_price = order.calculate_total_price() 
             order.save()

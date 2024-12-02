@@ -18,7 +18,7 @@ class PaymentVerifyView(View):
             print(f"The count of product after rollingback for {item.product.title} must be: { item.quantity}")
             item.product.stock += item.quantity
             item.product.save()
-            print('the count of prod after failed is:', item.product.stock)         
+            print(f"The count of product after rollingback for {item.product.title} is: { item.product.stock}")         
         order.save()
         
         

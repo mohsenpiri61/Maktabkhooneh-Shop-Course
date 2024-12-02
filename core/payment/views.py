@@ -9,9 +9,9 @@ from order.models import OrderModel, OrderStatusType
 class PaymentVerifyView(View):
     
     
-    def rollback_stock(order):
+    def rollback_stock(self, order):
         """بازگرداندن موجودی محصولات در صورت شکست پرداخت"""
-        for item in order.items.all():
+        for item in order.order_items.all():
             item.product.stock += item.quantity
             item.product.save()
             

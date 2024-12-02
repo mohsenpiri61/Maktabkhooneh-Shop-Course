@@ -195,7 +195,7 @@ SITE_PROTOCOL = "http"  # در صورت استفاده از HTTPS، آن را ب
 
 CSRF_TRUSTED_ORIGINS = [
     
-    'https://a23f-5-237-59-144.ngrok-free.app',
+    'https://2402-65-109-211-89.ngrok-free.app',
     'https://sandbox.zarinpal.com/',
    
 ]

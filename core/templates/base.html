@@ -589,6 +589,7 @@
                     csrfmiddlewaretoken: '{{ csrf_token }}'
         
                 },
+                // به‌روزرسانی تعداد آیتم‌های سبد خرید
                 success: function (response) {
                     $("#total-cart-item-count").html(response.total_quantity)
                     console.log(response);

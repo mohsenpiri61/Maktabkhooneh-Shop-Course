@@ -38,20 +38,21 @@ class OrderCheckOutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
         cart = CartModel.objects.get(user=user)
         
         
-    # کنترل موجودی هر محصول در سبد خرید
+        # کنترل موجودی هر محصول در سبد خرید
         for item in cart.cart_items.all():
             if item.product.stock < item.quantity:
                 form.add_error(None, f"موجودی محصول {item.product.name} کافی نیست.")
                 return self.form_invalid(form)  
-                  
+            else: 
+                item.product.stock -= item.quantity
+                item.product.save()   
+                   
         #  ایجاد سفارش و اضافه کردن آیتم های سفارش
         order = self.create_order(user, address, coupon)
         self.create_order_items(order, cart, self.request)
 
-        # کاهش موجودی محصولات
-        for item in cart.cart_items.all():
-            item.product.stock -= item.quantity
-            item.product.save()
+            
+            
          
         #  پاک کردن سبد خرید
         self.clear_cart(cart)

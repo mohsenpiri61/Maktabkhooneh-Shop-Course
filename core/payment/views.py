@@ -11,14 +11,32 @@ class PaymentVerifyView(View):
     
     def rollback_stock(self, order):
         """بازگرداندن موجودی محصولات در صورت شکست پرداخت"""
+        # ابتدا بررسی موجودی برای تمام آیتم‌ها
+        insufficient_stock = False
+
         for item in order.order_items.all():
-            item.product.stock += item.quantity
-            item.product.save()
+            # اگر موجودی محصول کمتر از تعداد درخواست‌شده باشد، موجودی کافی نیست
+            if item.product.stock < item.quantity:
+                insufficient_stock = True
+                print(f"موجودی محصول {item.product.title} کافی نیست. کسر موجودی متوقف می‌شود.")
+                break  # اگر یک آیتم موجودی کافی ندارد، بررسی را متوقف می‌کنیم
+
+        if insufficient_stock:
+            return  # اگر حتی یک آیتم موجودی کافی نداشت، کسر موجودی انجام نمی‌شود.
+
+        # اگر تمامی آیتم‌ها موجودی کافی دارند، کسر موجودی انجام می‌شود
+        for item in order.order_items.all():
+            # جلوگیری از کسر موجودی به زیر صفر
+            if item.product.stock >= item.quantity:
+                item.product.stock += item.quantity
+                item.product.save()
+            else:
+                print(f"موجودی کافی برای محصول {item.product.title} وجود ندارد. کسر موجودی انجام نمی‌شود.")
             
             
     def payment_failed(self, order):
         """کنترل شکست پرداخت"""
-        # بازگرداندن موجودی محصولات
+        # بازگرداندن موجودی محصولات در صورتی که پرداخت شکست خورده باشد
         self.rollback_stock(order)
 
         # تنظیم وضعیت سفارش به شکست خورده

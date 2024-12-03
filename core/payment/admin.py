@@ -10,6 +10,7 @@ class PaymentModelAdmin(admin.ModelAdmin):
         "id",
         "authority_id",
         "amount",
+        "ref_id",
         "response_code",
         "status",
         "created_date"

@@ -202,7 +202,7 @@ class OrderPendingPaymentView(LoginRequiredMixin, View):
         order = get_object_or_404(OrderModel, pk=pk, user=request.user)
 
         # اطمینان از اینکه سفارش در حالت "در انتظار پرداخت" است
-        if order.status != OrderStatusType.PENDING:
+        if order.status != OrderStatusType.PENDING.value:
             messages.error(request, "این سفارش قابل پرداخت نیست.")
             return redirect('dashboard:customer:order-list')
 

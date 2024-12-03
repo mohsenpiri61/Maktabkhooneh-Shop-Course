@@ -206,6 +206,6 @@ class OrderPendingPaymentView(LoginRequiredMixin, View):
             messages.error(request, "این سفارش قابل پرداخت نیست.")
             return redirect('dashboard:customer:order-list')
 
-        # هدایت به درگاه پرداخت (برای مثال: درگاه زرین پال)
+        # هدایت به درگاه پرداخت 
         payment_url = f"https://sandbox.zarinpal.com/pg/StartPay/{order.payment.authority_id}/"
         return redirect(payment_url)    

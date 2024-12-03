@@ -194,15 +194,10 @@ class CancelCouponView(LoginRequiredMixin, View):
             return JsonResponse({"message": "سبد خرید شما خالی است"}, status=400)
 
 
-class PendingOrdersView(LoginRequiredMixin, ListView):
-    model = OrderModel
-    template_name = 'order/pending-order.html'
-    context_object_name = 'pending_orders'
 
-    def get_queryset(self):
-        return OrderModel.objects.filter(status=OrderStatusType.PENDING.value, user=self.request.user).order_by('-created_date')
     
 class OrderPendingPaymentView(LoginRequiredMixin, View):
+    '''پرداخت سفارش های در حالت PENDING'''
     def get(self, request, pk):
         order = get_object_or_404(OrderModel, pk=pk, user=request.user)
 

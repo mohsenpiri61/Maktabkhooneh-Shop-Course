@@ -36,13 +36,13 @@ class PaymentVerifyView(View):
         
         # استخراج داده‌های پاسخ
         data = response.get("data", {})
-        status_code = data.get("code", 3)
+        code = data.get("code", -51)
         ref_id = data.get("ref_id")
 
         # ثبت اطلاعات پرداخت در مدل
         payment_obj.ref_id = ref_id
-        payment_obj.response_code = status_code
-        payment_obj.status = PaymentStatusType.success.value if status_code in {
+        payment_obj.response_code = code
+        payment_obj.status = PaymentStatusType.success.value if code in {
             100, 101} else PaymentStatusType.failed.value
         payment_obj.response_json = response
         payment_obj.save()
@@ -66,4 +66,4 @@ class PaymentVerifyView(View):
             self.payment_failed(order)
 
         order.save()       
-        return redirect(reverse_lazy("order:completed") if status_code in {100, 101} else reverse_lazy("order:failed"))
+        return redirect(reverse_lazy("order:completed") if code in {100, 101} else reverse_lazy("order:failed"))

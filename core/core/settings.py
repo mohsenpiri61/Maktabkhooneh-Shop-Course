@@ -182,7 +182,7 @@ PASSWORD_RESET_TIMEOUT = 172800  # 40 hours in seconds
 
 # celery configs
 CELERY_BROKER_URL = "redis://redis_shop:6379/1"
-# CELERY_RESULT_BACKEND = 'redis://redis_shop:6379/1'
+
 
 # payment gateway settings
 MERCHANT_ID = config("MERCHANT_ID",default="4ced0a1e-4ad8-4309-9668-3ea3ae8e8897")

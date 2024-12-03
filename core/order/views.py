@@ -1,18 +1,18 @@
 from django.views.generic import (
     TemplateView,
     FormView,
-    View
+    View, ListView
 )
 from django.contrib.auth.mixins import LoginRequiredMixin
 from order.permissions import HasCustomerAccessPermission
 from order.forms import CheckOutForm
 from cart.models import CartModel, CartItemModel
-from order.models import OrderModel, OrderItemModel, CouponModel, UserAddressModel
+from order.models import OrderModel, OrderItemModel, CouponModel, UserAddressModel, OrderStatusType
 from django.urls import reverse_lazy
 from cart.cart import CartSession
 from django.http import JsonResponse
 from django.utils import timezone
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from payment.zarinpal_client import ZarinPalSandbox
 from payment.models import PaymentModel
 from django.contrib import messages
@@ -192,3 +192,25 @@ class CancelCouponView(LoginRequiredMixin, View):
 
         except CartModel.DoesNotExist:
             return JsonResponse({"message": "سبد خرید شما خالی است"}, status=400)
+
+
+class PendingOrdersView(LoginRequiredMixin, ListView):
+    model = OrderModel
+    template_name = 'order/pending-order.html'
+    context_object_name = 'pending_orders'
+
+    def get_queryset(self):
+        return OrderModel.objects.filter(status=OrderStatusType.PENDING.value, user=self.request.user).order_by('-created_date')
+    
+class OrderPendingPaymentView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        order = get_object_or_404(OrderModel, pk=pk, user=request.user)
+
+        # اطمینان از اینکه سفارش در حالت "در انتظار پرداخت" است
+        if order.status != OrderStatusType.PENDING:
+            messages.error(request, "این سفارش قابل پرداخت نیست.")
+            return redirect('dashboard:customer:order-list')
+
+        # هدایت به درگاه پرداخت (برای مثال: درگاه زرین پال)
+        payment_url = f"https://sandbox.zarinpal.com/pg/StartPay/{order.payment.authority_id}/"
+        return redirect(payment_url)    

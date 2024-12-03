@@ -9,4 +9,6 @@ urlpatterns = [
     path("completed/",views.OrderCompletedView.as_view(),name="completed"),
     path("failed/",views.OrderFailedView.as_view(),name="failed"),
     path('cancel-coupon/', views.CancelCouponView.as_view(), name='cancel-coupon'),
+    path('pending-orders/', views.PendingOrdersView.as_view(), name='pending_orders'),
+    path("checkout/order/<int:pk>/",views.OrderPendingPaymentView.as_view(),name="order-pay"),
 ]

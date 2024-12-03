@@ -146,9 +146,14 @@
                                             <i class="bi-receipt small me-2"></i> مشاهده فاکتور
                                         </a>
                                         {% endif %}
+                                        {% if object.is_pending %}
+                                        <a class="btn btn-success btn-sm" href="{% url 'order:order-pay' pk=object.pk %}">
+                                            <i class="bi-wallet2 small me-2"></i> پرداخت
+                                        </a>
+                                        {% endif %}
                                         <a class="btn btn-primary btn-sm"
-                                            href="{% url 'dashboard:customer:order-detail' pk=object.pk %}">مشاهده
-                                            سفارش</a>
+                                            href="{% url 'dashboard:customer:order-detail' pk=object.pk %}">مشاهده سفارش</a>
+                                            
                                     </div>
                                 </div>
                             </div>

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>سفارش‌های در انتظار پرداخت</h2>
+{% if pending_orders %}
+    <ul>
+        {% for order in pending_orders %}
+        <li>
+            <strong>شماره سفارش:</strong> {{ order.id }}<br>
+            <strong>تاریخ:</strong> {{ order.created_date|date:"Y-m-d H:i" }}<br>
+            <strong>مبلغ کل:</strong> {{ order.total_price }} تومان<br>
+            <strong>وضعیت:</strong> {{ order.get_status_display }}
+        </li>
+        <hr>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>هیچ سفارشی در حالت در انتظار پرداخت وجود ندارد.</p>
+{% endif %}
+{% endblock %}

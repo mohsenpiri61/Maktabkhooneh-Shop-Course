@@ -76,6 +76,10 @@ class OrderModel(models.Model):
     def is_successful(self):
         return self.status == OrderStatusType.PAID.value
 
+    def is_pending(self):
+        return self.status == OrderStatusType.PENDING.value
+    
+    
     def get_price(self):
 
         if self.coupon:

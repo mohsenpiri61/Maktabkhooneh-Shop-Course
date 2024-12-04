@@ -27,5 +27,5 @@ class SubmitReviewView(LoginRequiredMixin, CreateView):
         return redirect(self.request.META.get('HTTP_REFERER'))
 
     def get_queryset(self):
-        # You can customize the queryset if needed
+       
         return ReviewModel.objects.filter(user=self.request.user)

@@ -21,6 +21,7 @@ class SubmitReviewView(LoginRequiredMixin, CreateView):
         return redirect(reverse_lazy('shop:product-detail', kwargs={"slug": product.slug}))
 
     def form_invalid(self, form):
+        # برای مشاهده خطاهایی که ممکن است در زمان ارسال فرم رخ بدهد
         for field, errors in form.errors.items():
             for error in errors:
                 messages.error(self.request, error)

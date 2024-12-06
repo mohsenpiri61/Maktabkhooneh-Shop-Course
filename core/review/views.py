@@ -5,7 +5,7 @@ from django.views.generic.edit import CreateView
 from .forms import SubmitReviewForm
 from .models import ReviewModel
 from django.contrib import messages
-
+from order.models import OrderStatusType, OrderItemModel
 
 class SubmitReviewView(LoginRequiredMixin, CreateView):
     http_method_names = ["post"]
@@ -14,9 +14,21 @@ class SubmitReviewView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.user = self.request.user
-        form.save()
-        # Assuming your form has a 'product_slug' field
+        
+        
         product = form.cleaned_data['product']
+        print('sffdsf',  product)
+        # بررسی اینکه کاربر محصول را خریداری کرده است یا خیر
+        has_purchased = OrderItemModel.objects.filter(
+            order__user=self.request.user,
+            product=product, order__status=OrderStatusType.PAID.value).exists()
+        
+        
+        if not has_purchased:
+            messages.error(self.request, "شما این محصول را نخریده‌اید و نمی‌توانید دیدگاهی ثبت کنید.")
+            return redirect(self.request.META.get('HTTP_REFERER'))
+        form.save()
+        
         messages.success(self.request, "دیدگاه شما با موفقیت ثبت شد و پس از بررسی نمایش داده خواهد شد")
         return redirect(reverse_lazy('shop:product-detail', kwargs={"slug": product.slug}))
 

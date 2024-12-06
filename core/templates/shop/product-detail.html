@@ -440,8 +440,8 @@
 
                         <div class="col-sm-auto mb-2 text-center">
                             <button type="button" class="btn btn-primary btn-transition rounded-pill"
-                                data-bs-toggle="modal" data-bs-target="#submitReviewModal">
-                                ثبت دیدگاه</button>
+                                data-bs-toggle="modal" data-bs-target="#submitReviewModal">ثبت دیدگاه</button>
+                                
                         </div>
                         <!-- End Col -->
                     </div>
@@ -553,7 +553,7 @@
             <div class="modal-body">
                 <form action="{% url 'review:submit-review' %}" method="post" id="review-form">
                     {% csrf_token %}
-                    <input hidden name="product" value="{{object.id}}">
+                    <input src="{{object.image.url}}" name="product" >
                     <div class="row">
                         <div class="mb-3">
                             <label class="form-label" for="rateModalInput">امتیاز</label>

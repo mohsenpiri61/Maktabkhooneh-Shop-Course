@@ -553,7 +553,10 @@
             <div class="modal-body">
                 <form action="{% url 'review:submit-review' %}" method="post" id="review-form">
                     {% csrf_token %}
-                    <input src="{{object.image.url}}" name="product" >
+                    <div class="mb-3 text-center">
+                        <img src="{{ object.image.url }}" alt="{{ object.name }}" class="img-fluid" style="max-width: 200px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px;">
+                    </div>
+                    <input type="hidden" name="product" value="{{ object.id }}">
                     <div class="row">
                         <div class="mb-3">
                             <label class="form-label" for="rateModalInput">امتیاز</label>

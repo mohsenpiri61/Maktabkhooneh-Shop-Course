@@ -13,11 +13,9 @@ class SubmitReviewView(LoginRequiredMixin, CreateView):
     form_class = SubmitReviewForm
 
     def form_valid(self, form):
-        form.instance.user = self.request.user
-        
-        
+        form.instance.user = self.request.user      
         product = form.cleaned_data['product']
-        print('sffdsf',  product)
+        
         # بررسی اینکه کاربر محصول را خریداری کرده است یا خیر
         has_purchased = OrderItemModel.objects.filter(
             order__user=self.request.user,

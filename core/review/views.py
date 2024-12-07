@@ -3,7 +3,7 @@ from django.urls import reverse_lazy
 from django.shortcuts import redirect
 from django.views.generic.edit import CreateView
 from .forms import SubmitReviewForm
-from .models import ReviewModel
+from .models import ReviewModel, ReviewStatusType
 from django.contrib import messages
 from order.models import OrderStatusType, OrderItemModel
 
@@ -25,10 +25,17 @@ class SubmitReviewView(LoginRequiredMixin, CreateView):
             return redirect(self.request.META.get('HTTP_REFERER'))
         
         # بررسی اینکه آیا کاربر قبلاً برای این محصول نظر ثبت کرده است یا خیر
-        has_reviewed = ReviewModel.objects.filter(user=self.request.user, product=product).exists()
-        if has_reviewed:
-            messages.error(self.request, "شما قبلاً برای این محصول نظر ثبت کرده‌اید.")
-            return redirect(self.request.META.get('HTTP_REFERER'))
+        existing_review = ReviewModel.objects.filter(user=self.request.user, product=product).first()
+        if existing_review:
+            if existing_review.status == ReviewStatusType.pending:
+                messages.error(self.request, " نظر قبلی شما در انتظار تایید است. و نمی‌توانید نظر جدیدی ارسال کنید..")
+                return redirect(self.request.META.get('HTTP_REFERER'))
+            elif existing_review.status == ReviewStatusType.accepted:
+                messages.error(self.request, "شما قبلاً برای این محصول نظر داده اید.")
+                return redirect(self.request.META.get('HTTP_REFERER'))
+            # elif existing_review.status == ReviewStatusType.rejected:
+            #     messages.error(self.request, "نظر قبلی شما رد شده است. و نمی‌توانید نظر جدیدی ارسال کنید.")
+            #     return redirect(self.request.META.get('HTTP_REFERER'))
         
         form.save()        
         messages.success(self.request, "دیدگاه شما با موفقیت ثبت شد و پس از بررسی نمایش داده خواهد شد")

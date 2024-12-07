@@ -19,14 +19,18 @@ class SubmitReviewView(LoginRequiredMixin, CreateView):
         # بررسی اینکه کاربر محصول را خریداری کرده است یا خیر
         has_purchased = OrderItemModel.objects.filter(
             order__user=self.request.user,
-            product=product, order__status=OrderStatusType.PAID.value).exists()
-        
-        
+            product=product, order__status=OrderStatusType.PAID.value).exists()      
         if not has_purchased:
             messages.error(self.request, "شما این محصول را نخریده‌اید و نمی‌توانید دیدگاهی ثبت کنید.")
             return redirect(self.request.META.get('HTTP_REFERER'))
-        form.save()
         
+        # بررسی اینکه آیا کاربر قبلاً برای این محصول نظر ثبت کرده است یا خیر
+        has_reviewed = ReviewModel.objects.filter(user=self.request.user, product=product).exists()
+        if has_reviewed:
+            messages.error(self.request, "شما قبلاً برای این محصول نظر ثبت کرده‌اید.")
+            return redirect(self.request.META.get('HTTP_REFERER'))
+        
+        form.save()        
         messages.success(self.request, "دیدگاه شما با موفقیت ثبت شد و پس از بررسی نمایش داده خواهد شد")
         return redirect(reverse_lazy('shop:product-detail', kwargs={"slug": product.slug}))
 

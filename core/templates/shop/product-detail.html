@@ -452,6 +452,8 @@
                 <!-- Comment -->
                 <ul class="list-comment list-comment-divider mb-5">
                     <!-- Item -->
+                  
+                {% if reviews.exists %}
                     {% for review in reviews %}
                     <li class="list-comment-item">
                         <div class="d-flex gap-1 mb-3">
@@ -491,10 +493,13 @@
                     </li>
                     <!-- End Item -->
                     {% endfor %}
-
+                {% else %} 
+                    <li>
+                        <p class="text-center">هیچ دیدگاهی برای این محصول ثبت نشده است.</p>
+                    </li> 
+                {% endif %}          
                 </ul>
                 <!-- End Comment -->
-
 
             </div>
         </div>

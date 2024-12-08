@@ -32,3 +32,25 @@ def show_swiper_products(context):
         status=ProductStatusType.publish.value).distinct().order_by("-created_date")[:5]
     wishlist_items = WishlistProductModel.objects.filter(user=request.user).values_list("product__id", flat=True) if request.user.is_authenticated else []
     return {"swiper_products": swiper_products,"request":request,"wishlist_items":wishlist_items}
+
+
+
+@register.inclusion_tag("includes/wished-products.html",takes_context=True)
+def show_wished_products(context):
+    request = context.get("request")
+    wished_products = ProductModel.objects.filter(
+        status=ProductStatusType.publish.value).distinct().order_by("avg_rate")[:4]
+ 
+    wishlist_items = WishlistProductModel.objects.filter(user=request.user).values_list("product__id", flat=True) if request.user.is_authenticated else []
+    return {"wished_products": wished_products, "request":request, "wishlist_items": wishlist_items}
+
+
+@register.inclusion_tag("includes/discounted-products.html",takes_context=True)
+def show_discounted_products(context):
+    request = context.get("request")
+    discounted_products = ProductModel.objects.filter(
+        status=ProductStatusType.publish.value).distinct().order_by("discount_percent")[:4]
+    for i in discounted_products:
+        print(i.id)
+    wishlist_items = WishlistProductModel.objects.filter(user=request.user).values_list("product__id", flat=True) if request.user.is_authenticated else []
+    return {"discounted_products": discounted_products, "request":request, "wishlist_items": wishlist_items}

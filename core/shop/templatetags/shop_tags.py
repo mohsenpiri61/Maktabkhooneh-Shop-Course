@@ -13,12 +13,6 @@ def show_latest_products(context):
     return {"latest_products": latest_products,"request":request,"wishlist_items":wishlist_items}
 
 
-from django import template
-from shop.models import ProductModel, WishlistProductModel, ProductStatusType
-
-register = template.Library()
-
-
 @register.inclusion_tag("includes/similar-products.html", takes_context=True)
 def show_similar_products(context, product):
     request = context.get("request")

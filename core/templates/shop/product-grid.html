@@ -9,7 +9,7 @@
     <div class="container content-space-t-2 content-space-t-lg-3">
         <div class="row">
             <div class="col-sm">
-                <h4 class="mb-0">شبکه محصولات</h4>
+                
             </div>
             <!-- End Col -->
 
@@ -92,7 +92,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="border-bottom pb-4 mb-4">
+                        <!-- <div class="border-bottom pb-4 mb-4">
                             <h5>دسته بندی</h5>
                             <div class="d-grid gap-2">
                                 <div class="mb-2 mb-sm-0 me-sm-2">
@@ -105,7 +105,7 @@
                                     </select>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
                         <div class="d-grid">
                             <button type="submit" class="btn btn-outline-primary btn-transition mb-3">اعمال
                                 فیلتر</button>
@@ -125,7 +125,19 @@
                 <div class="col-sm mb-3 mb-sm-0">
                     <h6 class="mb-0">{{total_items}} محصول</h6>
                 </div>
-
+                <h6>
+                    {% if current_category %}
+                    محصولات دسته‌بندی: 
+                    <strong>
+                        {% if parent_category %}
+                            {{ parent_category.title }} &raquo; 
+                        {% endif %}
+                        {{ current_category.title }}
+                    </strong>
+                    {% else %}
+                        همه محصولات
+                    {% endif %}
+                </h6>
                 <div class="col-sm-auto">
                     <div class="d-sm-flex justify-content-sm-end align-items-center">
                         <!-- Select -->
@@ -172,6 +184,7 @@
             <!-- End Row -->
 
             <div class="row row-cols-sm-2 row-cols-md-3 mb-10">
+          
                 {% for object in object_list %}
                 <div class="col mb-4">
                     <!-- Card -->

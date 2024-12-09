@@ -6,12 +6,12 @@ from .models import ProductModel, ProductImageModel, ProductCategoryModel, Wishl
 
 @admin.register(ProductModel)
 class ProductModelAdmin(admin.ModelAdmin):
-    list_display = ("id", "title", "stock", "status", "price", "discount_percent", "created_date")
+    list_display = ("id", "title", "category", "stock", "status", "price", "discount_percent", "created_date")
 
 
 @admin.register(ProductCategoryModel)
 class ProductCategoryModelAdmin(admin.ModelAdmin):
-    list_display = ("id", "title", "created_date")
+    list_display = ("id", "title", "parent", "created_date")
 
 
 @admin.register(ProductImageModel)

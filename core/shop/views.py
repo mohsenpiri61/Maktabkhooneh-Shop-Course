@@ -25,8 +25,15 @@ class ShopProductGridView(ListView):
             status=ProductStatusType.publish.value)
         if search_q := self.request.GET.get("q"):
             queryset = queryset.filter(title__icontains=search_q)
-        if category_id := self.request.GET.get("category_id"):
-            queryset = queryset.filter(category__id=category_id)
+        if category_id := self.kwargs.get("pk"):
+            try:
+                category = ProductCategoryModel.objects.get(id=category_id)
+                subcategories = category.children.all()
+                queryset = queryset.filter(category__in=[category, *subcategories])
+            except ProductCategoryModel.DoesNotExist:
+                queryset = ProductModel.objects.none()
+                
+                
         if min_price := self.request.GET.get("min_price"):
             queryset = queryset.filter(price__gte=min_price)
         if max_price := self.request.GET.get("max_price"):
@@ -43,7 +50,20 @@ class ShopProductGridView(ListView):
         context["total_items"] = self.get_queryset().count()
         context["wishlist_items"] = WishlistProductModel.objects.filter(user=self.request.user).values_list(
             "product__id", flat=True) if self.request.user.is_authenticated else []
-        context["categories"] = ProductCategoryModel.objects.all()
+        
+        
+        category_id = self.kwargs.get("pk")
+        if category_id:
+            current_category = ProductCategoryModel.objects.filter(id=category_id).first()
+            if current_category:
+                context["current_category"] = current_category
+                context["parent_category"] = current_category.parent  
+            else:
+                context["current_category"] = None
+                context["parent_category"] = None
+        else:
+            context["current_category"] = None
+            context["parent_category"] = None
         return context
 
 

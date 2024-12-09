@@ -1,4 +1,5 @@
 {% load static %}
+{% load shop_tags %}
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 
@@ -24,7 +25,51 @@
     <link rel="stylesheet" href="{% static 'css/theme.min.css' %}">
     <link rel="stylesheet" href="{% static 'vendor/toastify/toastify.css' %}">
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        
+        .dropdown-item {
+            position: relative;
+            padding: 10px 20px;
+            border: 1px solid #ddd;
+            background-color: #f8f9fa;
+        }
     
+        .dropdown-item:hover {
+            background-color: #e9ecef;
+        }
+    
+        .dropdown-item a {
+            text-decoration: none;
+            color: #333;
+            display: block;
+        }
+    
+        .dropdown-submenu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: none; /* مخفی کردن زیرمنو */
+            position: absolute;
+            top: 0;
+            right: 100%;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            z-index: 1000;
+        }
+    
+        .dropdown-item:hover .dropdown-submenu {
+            display: block; /* نمایش زیرمنو هنگام هاور */
+        }
+    
+        .dropdown-submenu li {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+    
+        .dropdown-submenu li:last-child {
+            border-bottom: none;
+        }
+    </style>    
     {% block extra_css %} {% endblock extra_css %}
 
     {% block extra_css_no_compress %} {% endblock extra_css_no_compress %}
@@ -42,7 +87,7 @@
             <nav class="js-mega-menu navbar-nav-wrap">
                 <!-- Default Logo -->
                 <a class="navbar-brand" href="{% url 'website:index' %}" aria-label="Front">
-                    <img class="navbar-brand-logo" src="{% static 'svg/logos/logo.svg' %}" alt="Logo">
+                    
                 </a>
                 <!-- End Default Logo -->
 
@@ -62,6 +107,7 @@
                 <!-- Collapse -->
                 <div class="collapse navbar-collapse" id="navbarNavDropdown">
                     <ul class="navbar-nav">
+                        {% show_categories_tree %}
                         <li class="nav-item">
                             <a class="nav-link  {% if request.resolver_match.view_name  == 'website:index' %} active {% endif %}" href="{% url 'website:index' %}">صفحه اصلی</a>
                         </li>
@@ -113,11 +159,16 @@
                             <a class="btn btn-primary btn-transition" href="{% url 'accounts:login' %}">ورود</a>
                             {% endif %}
                         </li>
+                        
                     </ul>
+                 
                 </div>
+               
                 <!-- End Collapse -->
             </nav>
+           
         </div>
+    
     </header>
 
     <!-- ========== END HEADER ========== -->

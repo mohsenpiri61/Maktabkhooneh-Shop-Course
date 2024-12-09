@@ -1,5 +1,5 @@
 from django import template
-from shop.models import ProductStatusType, ProductModel, WishlistProductModel
+from shop.models import ProductStatusType, ProductModel, WishlistProductModel, ProductCategoryModel
 
 register = template.Library()
 
@@ -16,7 +16,7 @@ def show_latest_products(context):
 @register.inclusion_tag("includes/similar-products.html", takes_context=True)
 def show_similar_products(context, product):
     request = context.get("request")
-    product_categories= product.category.all()
+    product_categories= product.category.children.all()
     similar_prodcuts = ProductModel.objects.filter(
         status=ProductStatusType.publish.value, category__in=product_categories).distinct().exclude(id=product.id).order_by("-created_date")[:4]
     wishlist_items =  WishlistProductModel.objects.filter(user=request.user).values_list("product__id",flat=True) if request.user.is_authenticated else []
@@ -51,3 +51,9 @@ def show_discounted_products(context):
         status=ProductStatusType.publish.value).distinct().order_by("-discount_percent")[:4]
     wishlist_items = WishlistProductModel.objects.filter(user=request.user).values_list("product__id", flat=True) if request.user.is_authenticated else []
     return {"discounted_products": discounted_products, "request":request, "wishlist_items": wishlist_items}
+
+
+@register.inclusion_tag('includes/categories-tree.html')
+def show_categories_tree():
+    categories_parent = ProductCategoryModel.objects.filter(parent=None)
+    return {'categories_parent': categories_parent}

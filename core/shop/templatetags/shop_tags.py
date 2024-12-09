@@ -39,7 +39,7 @@ def show_swiper_products(context):
 def most_popular_products(context):
     request = context.get("request")
     popular_products = ProductModel.objects.filter(
-        status=ProductStatusType.publish.value).distinct().order_by("avg_rate")[:4] 
+        status=ProductStatusType.publish.value).distinct().order_by("-avg_rate")[:4] 
     wishlist_items = WishlistProductModel.objects.filter(user=request.user).values_list("product__id", flat=True) if request.user.is_authenticated else []
     return {"popular_products": popular_products, "request":request, "wishlist_items": wishlist_items}
 

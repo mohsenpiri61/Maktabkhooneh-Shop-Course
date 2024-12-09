@@ -4,13 +4,24 @@ from django.views.generic import View, TemplateView
 from django.http import JsonResponse
 from shop.models import ProductModel, ProductStatusType
 from .cart import CartSession
+import json
 
 
 class SessionAddProductView(View):
 
     def post(self, request, *args, **kwargs):
         cart = CartSession(request.session)
-        product_id = request.POST.get("product_id")
+        
+        if not request.body:
+            return JsonResponse({"error": "داده‌ای ارسال نشده است."}, status=400)
+
+        try:
+            data = json.loads(request.body)  # تلاش برای تبدیل داده‌های JSON
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "فرمت داده‌های ارسال شده نامعتبر است."}, status=400)
+        data = json.loads(request.body)
+        product_id = data.get("product_id")
+        quantity = int(data.get("quantity", 1))  # تعداد انتخابی، پیش‌فرض 1
         
         # دریافت محصول
         try:
@@ -22,7 +33,7 @@ class SessionAddProductView(View):
             return JsonResponse({"error": f"موجودی محصول '{product_obj.title}' کافی نیست  ."}, status=400)
        
         # اضافه کردن محصول به سبد خرید 
-        product_obj_added = cart.add_product(product_id, product_obj.stock)
+        product_obj_added = cart.add_product(product_id, product_obj.stock, quantity=quantity)
         if not product_obj_added:
             return JsonResponse({"error": f"موجودی کافی برای محصول '{product_obj.title}' وجود ندارد."}, status=400)
 

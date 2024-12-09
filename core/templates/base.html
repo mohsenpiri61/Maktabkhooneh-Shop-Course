@@ -630,48 +630,34 @@
     <script src="{% static 'js/custom.js' %}"></script>
     <!-- JS Cart-->
     <script>
-        function addToCart(product_id) {
-            $.ajax({
-                url: "{% url 'cart:session-add-product' %}",
+
+        function addToCart(productId) {
+            const quantityInput = document.getElementById(`productQuantity-${productId}`);
+            const quantity = parseInt(quantityInput.value);
+    
+            fetch("{% url 'cart:session-add-product' %}", {
                 method: "POST",
                 headers: {
                     "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/json"
                 },
-                data: { product_id: product_id },
-                
-                success: function (response) {
-                    Toastify({
-                        text: "محصول به سبد خرید اضافه شد.",
-                        backgroundColor: "#28a745",
-                        duration: 3000,
-                        close: true,
-                    }).showToast();
-
-                    // به‌روزرسانی تعداد آیتم‌ها در سبد خرید
-                    $("#total-cart-item-count").html(response.total_quantity);
-                },
-                error: function (xhr) {
-                    const errorMessage = xhr.responseJSON
-                        ? xhr.responseJSON.error
-                        : "خطایی رخ داده است.";
-                    Toastify({
-                        text: errorMessage,
-                        backgroundColor: "#dc3545",
-                        duration: 3000,
-                        close: true,
-                    }).showToast();
-                },
-            });
+                body: JSON.stringify({
+                    product_id: productId,
+                    quantity: quantity
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    alert(data.message);
+                    document.getElementById("total-cart-item-count").innerText = data.total_quantity;
+                }
+            })
+            .catch(error => console.error("Error:", error));
         }
 
-        // اضافه کردن عملکرد به دکمه‌ها
-        $(document).ready(function () {
-            $(".add-to-cart-btn").click(function () {
-                const product_id = $(this).data("product-id");
-                addToCart(product_id);
-            });
-        });
-     
         
         function addToWishlist(element,product_id) {
      

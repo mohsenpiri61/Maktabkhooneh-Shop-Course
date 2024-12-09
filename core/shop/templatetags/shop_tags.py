@@ -13,16 +13,38 @@ def show_latest_products(context):
     return {"latest_products": latest_products,"request":request,"wishlist_items":wishlist_items}
 
 
+from django import template
+from shop.models import ProductModel, WishlistProductModel, ProductStatusType
+
+register = template.Library()
+
+
 @register.inclusion_tag("includes/similar-products.html", takes_context=True)
 def show_similar_products(context, product):
     request = context.get("request")
-    product_categories= product.category.children.all()
-    similar_prodcuts = ProductModel.objects.filter(
-        status=ProductStatusType.publish.value, category__in=product_categories).distinct().exclude(id=product.id).order_by("-created_date")[:4]
-    wishlist_items =  WishlistProductModel.objects.filter(user=request.user).values_list("product__id",flat=True) if request.user.is_authenticated else []
-    return {"similar_prodcuts": similar_prodcuts,"request":request,"wishlist_items":wishlist_items}
-
-
+    
+    # دریافت دسته‌بندی فعلی محصول
+    main_category = product.category
+    parent_category = main_category.parent if main_category else None
+    
+    # پیدا کردن دسته‌بندی‌های فرزند از دسته‌بندی والد
+    if parent_category:
+        product_categories = parent_category.children.all()
+    else:
+        product_categories = [main_category]  # اگر دسته‌بندی والد ندارد، فقط دسته‌بندی فعلی در نظر گرفته می‌شود.
+    
+    # فیلتر محصولات مشابه بر اساس دسته‌بندی
+    similar_products = ProductModel.objects.filter(
+        status=ProductStatusType.publish.value, 
+        category__in=product_categories
+    ).distinct().exclude(id=product.id).order_by("-created_date")[:4]
+    wishlist_items = WishlistProductModel.objects.filter(user=request.user).values_list("product__id", flat=True) if request.user.is_authenticated else []
+    
+    return {
+        "similar_prodcuts": similar_products,
+        "request": request,
+        "wishlist_items": wishlist_items
+    }
 
 
 @register.inclusion_tag("includes/swiper-products.html",takes_context=True)

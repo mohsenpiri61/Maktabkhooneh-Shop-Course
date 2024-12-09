@@ -23,12 +23,15 @@ class ShopProductGridView(ListView):
     def get_queryset(self):
         queryset = ProductModel.objects.filter(
             status=ProductStatusType.publish.value)
+        
         if search_q := self.request.GET.get("q"):
             queryset = queryset.filter(title__icontains=search_q)
+            
         if category_id := self.kwargs.get("pk"):
             try:
                 category = ProductCategoryModel.objects.get(id=category_id)
                 subcategories = category.children.all()
+                print("Category", category, subcategories)
                 queryset = queryset.filter(category__in=[category, *subcategories])
             except ProductCategoryModel.DoesNotExist:
                 queryset = ProductModel.objects.none()
@@ -75,6 +78,15 @@ class ShopProductDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         product = self.get_object()
+        
+        main_category = product.category
+        parent_category = main_category.parent if main_category else None
+
+   
+        context["product"] = product
+        context["current_category"] = main_category
+        context["parent_category"] = parent_category
+        
         context["is_wished"] = WishlistProductModel.objects.filter(
             user=self.request.user, product__id=product.id).exists() if self.request.user.is_authenticated else False
         reviews = ReviewModel.objects.filter(product=product, status=ReviewStatusType.accepted.value)

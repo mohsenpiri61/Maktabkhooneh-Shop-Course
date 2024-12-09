@@ -100,14 +100,27 @@
             <!-- Heading -->
             <div class="mb-5">
 
+                <p>
+                    {% if current_category %}
+                     دسته‌بندی: 
+                    
+                        {% if parent_category %}
+                            <a href="{% url 'shop:category-products' pk=parent_category.id %}">
+                            {{ parent_category.title }} &raquo; 
+                            </a>
+                        {% endif %}
+                        <a href="{% url 'shop:category-products' pk=current_category.id %}">
+                        {{ current_category.title }}
+                        </a>
+                    {% endif %}
+                    <strong>
+                    {% if product %}
+                        &raquo; {{ product.title }}
+                    {% endif %}
+                    </strong>
+                </p>
                 <h1 class="h2">{{object.title}}</h1>
 
-                <p>
-                    {% for category in object.category.all %}
-                    <a href="#">{{category.title}} </a>
-                    {% if not forloop.last %} ,{% endif %}
-                    {% endfor %}
-                </p>
                 <p>{{object.brief_description}}</p>
             </div>
             <!-- End Heading -->

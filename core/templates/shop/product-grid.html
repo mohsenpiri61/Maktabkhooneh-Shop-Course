@@ -127,10 +127,12 @@
                 </div>
                 <h6>
                     {% if current_category %}
-                    محصولات دسته‌بندی: 
+                     دسته‌بندی: 
                     <strong>
                         {% if parent_category %}
+                            <a href="{% url 'shop:category-products' pk=parent_category.id %}">
                             {{ parent_category.title }} &raquo; 
+                            </a>
                         {% endif %}
                         {{ current_category.title }}
                     </strong>

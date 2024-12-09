@@ -1,18 +1,18 @@
 <div class="row mb-4" >
-    {% for wished_product in wished_products %}
+    {% for popular_product in popular_products %}
     <div class="col-sm-6 col-md-3 mb-6">
         <!-- Card -->
         <div class="col mb-4">
             <!-- Card -->
             <div class="card card-bordered shadow-none text-center h-100">
                 <div class="card-pinned">
-                    <img class="card-img-top" src="{{wished_product.image.url}}" alt="Image Description">
+                    <img class="card-img-top" src="{{popular_product.image.url}}" alt="Image Description">
                     {% if request.user.is_authenticated %}
                     <div class="card-pinned-top-end">
                         <button type="button"
-                            class="btn btn-outline-secondary btn-xs btn-icon rounded-circle {% if wished_product.id in wishlist_items %} active {% endif %}"
+                            class="btn btn-outline-secondary btn-xs btn-icon rounded-circle {% if popular_product.id in wishlist_items %} active {% endif %}"
                             data-bs-toggle="tooltip" data-bs-placement="top" title="افزودن به علایق"
-                            onclick="addToWishlist(this,`{{wished_product.id}}`)">
+                            onclick="addToWishlist(this,`{{popular_product.id}}`)">
                             <i class="bi-heart"></i>
                         </button>
                     </div>
@@ -21,7 +21,7 @@
 
                 <div class="card-body">
                     <div class="mb-2">
-                        {% for category in wished_product.category.all %}
+                        {% for category in popular_product.category.all %}
                         <a class="link-sm link-secondary" href="#"> {{category.title}} </a>
                         {% if not forloop.last %}
                         ,
@@ -31,16 +31,16 @@
 
                     <h4 class="card-title">
                         <a class="text-dark"
-                            href="{% url 'shop:product-detail' slug=wished_product.slug %}">{{wished_product.title}}</a>
+                            href="{% url 'shop:product-detail' slug=popular_product.slug %}">{{popular_product.title}}</a>
                     </h4>
-                    {% if wished_product.is_discounted %}
+                    {% if popular_product.is_discounted %}
                     <p class="card-text text-dark fs-4">
-                        <span class="formatted-price">{{wished_product.get_price}}</span>
+                        <span class="formatted-price">{{popular_product.get_price}}</span>
                         <span
-                            class="text-body me-1 fs-6 formatted-price text-decoration-line-through">{{wished_product.price}}</span>
+                            class="text-body me-1 fs-6 formatted-price text-decoration-line-through">{{popular_product.price}}</span>
                     </p>
                     {% else %}
-                    <p class="card-text text-dark fs-4 formatted-price"> {{wished_product.price}} </p>
+                    <p class="card-text text-dark fs-4 formatted-price"> {{popular_product.price}} </p>
                     {% endif %}
                 </div>
 
@@ -49,21 +49,21 @@
                     <a class="d-inline-flex align-items-center mb-3" href="#">
                         <div class="d-flex gap-1 ms-2">
                             {% for i in "12345" %}
-                            {% if i|add:0 <= wished_product.avg_rate %} <span><i
+                            {% if i|add:0 <= popular_product.avg_rate %} <span><i
                                     class="bi bi-star-fill star-rate"></i></span>
                                 {% else %}
                                 <span><i class="bi bi-star star-rate"></i></span>
                                 {% endif %}
 
                                 {% endfor %}
-                                <span class="ms-1">{{wished_product.avg_rate}}/5</span>
+                                <span class="ms-1">{{popular_product.avg_rate}}/5</span>
                         </div>
 
                     </a>
                     <!-- End Rating -->
 
                     <button type="button" class="btn btn-outline-primary btn-sm btn-transition rounded-pill"
-                        onclick="addToCart('{{wished_product.id}}')">افزودن به
+                        onclick="addToCart('{{popular_product.id}}')">افزودن به
                         سبد
                         خرید</button>
                 </div>

@@ -40,6 +40,9 @@
                             href="{% url 'shop:product-detail' slug=similar_prodcut.slug %}">{{similar_prodcut.title}}</a>
                     </h4>
                     {% if similar_prodcut.is_discounted %}
+                    <div class="card-pinned-top-start">
+                        <span class="badge bg-danger rounded-pill">{{similar_product.discount_percent}}% </span>
+                    </div>
                     <p class="card-text text-dark fs-4">
                         <span class="formatted-price">{{similar_prodcut.get_price}}</span>
                         <span

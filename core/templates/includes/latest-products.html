@@ -42,6 +42,9 @@
                             href="{% url 'shop:product-detail' slug=latest_product.slug %}">{{latest_product.title}}</a>
                     </h4>
                     {% if latest_product.is_discounted %}
+                    <div class="card-pinned-top-start">
+                        <span class="badge bg-danger rounded-pill">{{latest_product.discount_percent}}% </span>
+                    </div>
                     <p class="card-text text-dark fs-4">
                         <span class="formatted-price">{{latest_product.get_price}}</span>
                         <span

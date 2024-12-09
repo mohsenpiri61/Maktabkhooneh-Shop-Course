@@ -48,6 +48,6 @@ def most_popular_products(context):
 def show_discounted_products(context):
     request = context.get("request")
     discounted_products = ProductModel.objects.filter(
-        status=ProductStatusType.publish.value).distinct().order_by("discount_percent")[:4]
+        status=ProductStatusType.publish.value).distinct().order_by("-discount_percent")[:4]
     wishlist_items = WishlistProductModel.objects.filter(user=request.user).values_list("product__id", flat=True) if request.user.is_authenticated else []
     return {"discounted_products": discounted_products, "request":request, "wishlist_items": wishlist_items}

@@ -173,7 +173,10 @@
                         </a>
                     </div>
                 </div>
-            </div>            <!-- End Quantity -->
+            </div>            
+            
+            
+            <!-- End Quantity -->
 
             <!-- Accordion -->
             <div class="accordion mb-5" id="shopCartAccordion">
@@ -607,40 +610,5 @@
 </div>
 {% endblock content %}
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const quantityInputs = document.querySelectorAll(".js-result");
-    
-        quantityInputs.forEach(input => {
-            // اضافه کردن یک رویداد برای نظارت بر تغییرات ورودی
-            input.addEventListener("input", function () {
-                console.log(`Product ID: ${this.id.split("-")[1]}, Quantity: ${this.value}`);
-            });
-        });
-    });
-    
-    // توابع افزایش و کاهش تعداد
-    function decreaseQuantity(productId) {
-        const quantityInput = document.getElementById(`productQuantity-${productId}`);
-        let currentQuantity = parseInt(quantityInput.value);
-        if (currentQuantity > 1) {
-            quantityInput.value = currentQuantity - 1;
-            console.log(`Product ID: ${productId}, Quantity: ${quantityInput.value}`);
-        }
-    }
-    
-    function increaseQuantity(productId, maxStock) {
-        const quantityInput = document.getElementById(`productQuantity-${productId}`);
-        let currentQuantity = parseInt(quantityInput.value);
-        if (currentQuantity < maxStock) {
-            quantityInput.value = currentQuantity + 1;
-            console.log(`Product ID: ${productId}, Quantity: ${quantityInput.value}`);
-        } else {
-            console.warn(`Product ID: ${productId} - Maximum stock reached!`);
-        }
-    }
-    
-
-</script>
 
 

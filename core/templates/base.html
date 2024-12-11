@@ -659,7 +659,6 @@
             const quantityInput = document.getElementById(`productQuantity-${productId}`);
             // اگر ورودی وجود داشت، مقدار آن را بگیر، در غیر این صورت مقدار پیش‌فرض 1 را تنظیم کن
             const quantity = quantityInput ? parseInt(quantityInput.value) : 1;
-            consol.log(quantityInput, quantity)
             
             fetch("{% url 'cart:session-add-product' %}", {
                 method: "POST",
@@ -685,7 +684,66 @@
             .catch(error => console.error("Error:", error));
         }
         
-
+        function decreaseQuantity(productId) {
+            const quantityInput = document.getElementById(`productQuantity-${productId}`);
+            const decreaseButton = document.getElementById(`decreaseQuantity-${productId}`);
+            const increaseButton = document.getElementById(`increaseQuantity-${productId}`);
+        
+            let currentQuantity = parseInt(quantityInput.value);
+        
+            if (currentQuantity > 1) {
+                quantityInput.value = currentQuantity - 1;
+        
+                // اگر تعداد به 1 رسید، دکمه کاهش را غیرفعال کن
+                if (currentQuantity - 1 === 1) {
+                    decreaseButton.setAttribute("disabled", true);
+                }
+                // دکمه افزایش را دوباره فعال کن
+                increaseButton.removeAttribute("disabled");
+            }
+        }
+        
+        function increaseQuantity(productId, maxStock) {
+            const quantityInput = document.getElementById(`productQuantity-${productId}`);
+            const decreaseButton = document.getElementById(`decreaseQuantity-${productId}`);
+            const increaseButton = document.getElementById(`increaseQuantity-${productId}`);
+        
+            let currentQuantity = parseInt(quantityInput.value);
+        
+            if (currentQuantity < maxStock) {
+                quantityInput.value = currentQuantity + 1;
+        
+                // اگر تعداد به موجودی حداکثری رسید، دکمه افزایش را غیرفعال کن
+                if (currentQuantity + 1 === maxStock) {
+                    increaseButton.setAttribute("disabled", true);
+                }
+                // دکمه کاهش را دوباره فعال کن
+                decreaseButton.removeAttribute("disabled");
+            }
+        }
+        
+        // بررسی دکمه‌ها در هنگام بارگذاری صفحه
+        document.addEventListener("DOMContentLoaded", function () {
+            const quantityInputs = document.querySelectorAll(".js-result");
+        
+            quantityInputs.forEach(input => {
+                const productId = input.id.split("-")[1];
+                const decreaseButton = document.getElementById(`decreaseQuantity-${productId}`);
+                const increaseButton = document.getElementById(`increaseQuantity-${productId}`);
+                const maxStock = parseInt(increaseButton.getAttribute("data-max-stock"));
+                const currentQuantity = parseInt(input.value);
+        
+                // بررسی و تنظیم دکمه‌ها
+                if (currentQuantity <= 1) {
+                    decreaseButton.setAttribute("disabled", true);
+                }
+                if (currentQuantity >= maxStock) {
+                    increaseButton.setAttribute("disabled", true);
+                }
+            });
+        });
+        
+    
         
         function addToWishlist(element,product_id) {
      

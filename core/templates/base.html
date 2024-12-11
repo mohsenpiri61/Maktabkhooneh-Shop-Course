@@ -107,12 +107,35 @@
                 <!-- Collapse -->
                 <div class="collapse navbar-collapse" id="navbarNavDropdown">
                     <ul class="navbar-nav">
-                        {% show_categories_tree %}
+                        
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle"  id="categoryDropdown" role="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                دسته‌بندی محصولات
+                                
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="categoryDropdown">
+                                {% for category_parent in categories_parent %}
+                                <li class="dropdown-item dropdown">
+                                    <a href="{% url 'shop:category-products' pk=category_parent.id %}" class="dropdown-link">
+                                        {{ category_parent.title }}
+                                    </a>
+                                    {% if category_parent.children.all %}
+                                    <ul class="dropdown-menu dropdown-submenu">
+                                        {% for child in category_parent.children.all %}
+                                        <li>
+                                            <a href="{% url 'shop:category-products' pk=child.id %}" class="dropdown-link">{{ child.title }}</a>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                    {% endif %}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link  {% if request.resolver_match.view_name  == 'website:index' %} active {% endif %}" href="{% url 'website:index' %}">صفحه اصلی</a>
                         </li>
-
-
                         <li class="nav-item">
                             <a class="nav-link {% if request.resolver_match.view_name  == 'shop:product-grid' %} active {% endif %}" href="{% url 'shop:product-grid' %}">لیست محصولات</a>
                         </li>

@@ -69,7 +69,3 @@ def show_discounted_products(context):
     return {"discounted_products": discounted_products, "request":request, "wishlist_items": wishlist_items}
 
 
-@register.inclusion_tag('includes/categories-tree.html')
-def show_categories_tree():
-    categories_parent = ProductCategoryModel.objects.filter(parent=None)
-    return {'categories_parent': categories_parent}

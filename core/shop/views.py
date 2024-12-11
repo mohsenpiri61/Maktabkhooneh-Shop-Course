@@ -31,7 +31,6 @@ class ShopProductGridView(ListView):
             try:
                 category = ProductCategoryModel.objects.get(id=category_id)
                 subcategories = category.children.all()
-                print("Category", category, subcategories)
                 queryset = queryset.filter(category__in=[category, *subcategories])
             except ProductCategoryModel.DoesNotExist:
                 queryset = ProductModel.objects.none()

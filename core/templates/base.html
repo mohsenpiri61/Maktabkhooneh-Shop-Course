@@ -655,9 +655,12 @@
     <script>
 
         function addToCart(productId) {
+            // بررسی وجود ورودی تعداد
             const quantityInput = document.getElementById(`productQuantity-${productId}`);
-            const quantity = parseInt(quantityInput.value);
-    
+            // اگر ورودی وجود داشت، مقدار آن را بگیر، در غیر این صورت مقدار پیش‌فرض 1 را تنظیم کن
+            const quantity = quantityInput ? parseInt(quantityInput.value) : 1;
+            consol.log(quantityInput, quantity)
+            
             fetch("{% url 'cart:session-add-product' %}", {
                 method: "POST",
                 headers: {
@@ -675,11 +678,13 @@
                     alert(data.error);
                 } else {
                     alert(data.message);
+                    // به‌روزرسانی تعداد کل محصولات در سبد خرید
                     document.getElementById("total-cart-item-count").innerText = data.total_quantity;
                 }
             })
             .catch(error => console.error("Error:", error));
         }
+        
 
         
         function addToWishlist(element,product_id) {

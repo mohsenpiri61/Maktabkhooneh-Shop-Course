@@ -19,7 +19,7 @@ class SessionAddProductView(View):
             data = json.loads(request.body)  # تلاش برای تبدیل داده‌های JSON
         except json.JSONDecodeError:
             return JsonResponse({"error": "فرمت داده‌های ارسال شده نامعتبر است."}, status=400)
-        data = json.loads(request.body)
+        
         product_id = data.get("product_id")
         quantity = int(data.get("quantity", 1))  # تعداد انتخابی، پیش‌فرض 1
         

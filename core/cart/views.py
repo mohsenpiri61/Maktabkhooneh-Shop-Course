@@ -33,7 +33,7 @@ class SessionAddProductView(View):
             return JsonResponse({"error": f"موجودی محصول '{product_obj.title}' کافی نیست  ."}, status=400)
        
         # اضافه کردن یا بروزرسانی تعداد محصول در سبد خرید
-        cart.add_or_update_product(product_id, quantity)
+        cart.add_or_update_product_quantity(product_id, quantity)
   
 
         # ادغام سبد خرید session با دیتابیس (در صورت احراز هویت کاربر)

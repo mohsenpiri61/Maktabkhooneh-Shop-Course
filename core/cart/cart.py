@@ -7,13 +7,15 @@ class CartSession:
         self.session = session
         self._cart = self.session.setdefault("cart", {"items": []})
 
-    def update_product_quantity(self, product_id, quantity):
+    def add_or_update_product_quantity(self, product_id, quantity):
+        """ اضافه کردن یا بروزرسانی تعداد محصول در سبد خرید """
         for item in self._cart["items"]:
             if product_id == item["product_id"]:
                 item["quantity"] = int(quantity)
                 break
         else:
-            return
+            # محصول به سبد اضافه می‌شود اگر قبلاً وجود نداشته باشد
+            self._cart["items"].append({"product_id": product_id, "quantity": quantity})
         self.save()
 
     def remove_product(self, product_id):
@@ -25,21 +27,21 @@ class CartSession:
             return
         self.save()
 
-    def add_product(self, product_id, stock, quantity=1):
-        for item in self._cart["items"]:
-            if product_id == item["product_id"]:
-                if item["quantity"] + 1 > stock:  # بررسی موجودی کافی
-                    return False
-                item["quantity"] += 1
-                self.save()
-                return True
-        else:
-            if stock < quantity:  # بررسی موجودی برای آیتم جدید
-                return False
-            new_item = {"product_id": product_id, "quantity": quantity}
-            self._cart["items"].append(new_item)
-            self.save()
-            return True
+    # def add_product(self, product_id, stock, quantity=1):
+    #     for item in self._cart["items"]:
+    #         if product_id == item["product_id"]:
+    #             if item["quantity"] + 1 > stock:  # بررسی موجودی کافی
+    #                 return False
+    #             item["quantity"] += 1
+    #             self.save()
+    #             return True
+    #     else:
+    #         if stock < quantity:  # بررسی موجودی برای آیتم جدید
+    #             return False
+    #         new_item = {"product_id": product_id, "quantity": quantity}
+    #         self._cart["items"].append(new_item)
+    #         self.save()
+    #         return True
 
     def clear(self):
         self._cart = self.session["cart"] = {"items": []}

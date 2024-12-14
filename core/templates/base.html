@@ -593,30 +593,32 @@
         function addToCart(productId) {
             const InputElement = document.getElementById(`productQuantity-${productId}`);
             let quantity = parseInt(InputElement.value);
-            console.log(quantity)
+            console.log(quantity);
         
-            fetch("{% url 'cart:session-add-product' %}", {
+            $.ajax({
+                url: "{% url 'cart:session-add-product' %}",
                 method: "POST",
-                headers: {
-                    "X-CSRFToken": "{{ csrf_token }}",
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
+                data: {
                     product_id: productId,
-                    quantity: quantity
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    alert(data.error);
-                } else {
-                    alert(data.message);
-                    document.getElementById("total-cart-item-count").innerText = data.total_quantity;
+                    quantity: quantity,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'  // ارسال توکن CSRF
+                },
+                dataType: "json",
+                success: function(data) {
+                    if (data.error) {
+                        alert(data.error);
+                    } else {
+                        alert(data.message);
+                        // به‌روزرسانی تعداد کل محصولات در سبد خرید
+                        $("#total-cart-item-count").text(data.total_quantity);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error:", error);
                 }
-            })
-            .catch(error => console.error("Error:", error));
+            });
         }
+        
 
 
 

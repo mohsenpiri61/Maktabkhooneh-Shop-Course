@@ -12,6 +12,7 @@ class SessionAddProductView(View):
     def post(self, request, *args, **kwargs):
         cart = CartSession(request.session)
         
+        # بررسی می‌کنیم که آیا داده‌ای ارسال شده است یا خیر.
         if not request.body:
             return JsonResponse({"error": "داده‌ای ارسال نشده است."}, status=400)
 

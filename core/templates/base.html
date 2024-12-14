@@ -606,16 +606,16 @@
                     quantity: quantity
                 })
             })
-            success: function (response) {
-                Toastify({
-                    text: "محصول به سبد خرید اضافه شد.",
-                    backgroundColor: "#28a745",
-                    duration: 3000,
-                    close: true,
-                }).showToast();
-
-                
-
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    alert(data.message);
+                    document.getElementById("total-cart-item-count").innerText = data.total_quantity;
+                }
+            })
+            .catch(error => console.error("Error:", error));
         }
 
 
